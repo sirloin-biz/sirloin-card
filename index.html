@@ -518,10 +518,10 @@ async function saveCard() {
     if (PF) {
       var fext = PF.name.split('.').pop();
       var fn = Date.now() + "." + fext;
-      var { data: upData, error: upErr } = await sb.storage.from("cards-files").upload(fn, PF);
+      var { data: upData, error: upErr } = await sb.storage.from("card-files").upload(fn, PF);
       if (upErr) throw upErr;
       fileName = PF.name;
-      var { data: urlData } = sb.storage.from("cards-files").getPublicUrl(fn);
+      var { data: urlData } = sb.storage.from("card-files").getPublicUrl(fn);
       fileUrl = urlData.publicUrl;
     }
 
