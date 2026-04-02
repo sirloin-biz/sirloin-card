@@ -158,7 +158,6 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
 .usec{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-top:16px}
 .usec-hd{padding:12px 14px;background:var(--sf2);border-bottom:1px solid var(--bd);font-size:12px;font-weight:700;color:var(--tx2)}
 
-/* 로그인 화면 */
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg)}
 .login-box{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:40px 36px;width:360px;text-align:center}
 .login-logo{width:44px;height:44px;background:var(--ac);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:14px;font-weight:500;color:#fff;margin:0 auto 16px}
@@ -173,11 +172,9 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
 </head>
 <body>
 
-<!-- 로딩 오버레이 -->
 <div class="ov" id="ov"><div class="sp2"></div><div class="lt3" id="lt3">불러오는 중...</div></div>
 <div class="tst" id="tst"></div>
 
-<!-- 로그인 화면 -->
 <div class="login-wrap" id="loginPage">
   <div class="login-box">
     <div class="login-logo">SL</div>
@@ -190,7 +187,6 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
   </div>
 </div>
 
-<!-- 메인 앱 -->
 <div class="app" id="mainApp" style="display:none">
 <aside class="sb">
   <div class="logo"><div class="lm">SL</div><div><div class="lt">설로인</div><div class="ls">법인사업팀 어드민</div></div></div>
@@ -313,31 +309,23 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
 </main>
 </div>
 
-<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
 // ───────────────────────────────────────
-// Supabase 설정
+// 전역 설정 및 변수
 // ───────────────────────────────────────
 const SUPA_URL = "https://mvjbvyeiyrmtgnbydghr.supabase.co";
 const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12amJ2eWVpeXJtdGduYnlkZ2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTczMzAsImV4cCI6MjA5MDY3MzMzMH0.CsWrPRbXLcmVmYyj85-fDu_8BiaRNmCHDPw-30a_pEs";
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-// ───────────────────────────────────────
-// 전역 변수
-// ───────────────────────────────────────
 var Y, M, SD = null, AD = {}, PF = null, SCT = -1;
 var FSQ = "", FCT = "all", ROLE = "viewer";
 var CTS = ["상시감카", "메세지감카", "자체감카", "감카없음"];
-var NF = [1];
 var WD = ["일", "월", "화", "수", "목", "금", "토"];
-var MN = ["1월","2월","3월","4월","5월","6월","7월","8월","9월","10월","11월","12월"];
-var TC = ["t0","t1","t2","t3"];
-var TBC = ["t0c","t1c","t2c","t3c"];
 var CURRENT_USER_EMAIL = "";
 
 // ───────────────────────────────────────
-// 로그인 / 로그아웃
+// 로그인 / 로그아웃 제어
 // ───────────────────────────────────────
 document.getElementById("loginBtn").addEventListener("click", doLogin);
 document.getElementById("loginPw").addEventListener("keydown", function(e){ if(e.key==="Enter") doLogin(); });
@@ -351,24 +339,18 @@ async function doLogin() {
   showOv("로그인 중...");
   var { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
   hideOv();
-  if (error) { errEl.textContent = "로그인 실패: 이메일 또는 비밀번호를 확인해주세요."; return; }
+  if (error) { errEl.textContent = "로그인 실패: 정보를 확인해주세요."; return; }
   CURRENT_USER_EMAIL = email;
   startApp();
 }
 
 async function doLogout() {
   await sb.auth.signOut();
-  document.getElementById("mainApp").style.display = "none";
-  document.getElementById("loginPage").style.display = "flex";
-  document.getElementById("loginEmail").value = "";
-  document.getElementById("loginPw").value = "";
+  location.reload();
 }
 
-// 페이지 로드 시 이미 로그인된 세션 확인
 window.addEventListener("load", async function() {
-  showOv("확인 중...");
   var { data: { session } } = await sb.auth.getSession();
-  hideOv();
   if (session) {
     CURRENT_USER_EMAIL = session.user.email;
     startApp();
@@ -388,512 +370,163 @@ async function startApp() {
 }
 
 // ───────────────────────────────────────
-// 권한 로드
+// 데이터 로드 및 UI 렌더링
 // ───────────────────────────────────────
 async function loadRole() {
-  var { data, error } = await sb
-    .from("user_roles")
-    .select("role")
-    .eq("email", CURRENT_USER_EMAIL.toLowerCase())
-    .maybeSingle();
-
-  ROLE = (data && data.role) ? data.role.toLowerCase().trim() : "viewer";
+  var { data } = await sb.from("user_roles").select("role").eq("email", CURRENT_USER_EMAIL.toLowerCase()).maybeSingle();
+  ROLE = data ? data.role : "viewer";
   var canEdit = (ROLE === "master" || ROLE === "editor");
   if (ROLE === "master") document.getElementById("menuPerm").style.display = "flex";
-  document.getElementById("regBtn").style.display  = canEdit ? "" : "none";
+  document.getElementById("regBtn").style.display = canEdit ? "" : "none";
   document.getElementById("addBtn2").style.display = canEdit ? "" : "none";
   document.getElementById("roleBadge").textContent = ROLE;
 }
 
-// ───────────────────────────────────────
-// 이벤트 바인딩
-// ───────────────────────────────────────
-function bindEvents() {
-  document.getElementById("tab0").addEventListener("click", function(){ swTab(0); });
-  document.getElementById("tab1").addEventListener("click", function(){ swTab(1); });
-  document.getElementById("regBtn").addEventListener("click", openUF);
-  document.getElementById("addBtn2").addEventListener("click", openUF);
-  document.getElementById("cancelBtn").addEventListener("click", closeUF);
-  document.getElementById("saveBtn").addEventListener("click", saveCard);
-  document.getElementById("prevM").addEventListener("click", function(){ chMon(-1); });
-  document.getElementById("nextM").addEventListener("click", function(){ chMon(1); });
-  document.getElementById("todayBtn").addEventListener("click", setToday);
-  document.getElementById("weekBtn").addEventListener("click", setWeek);
-  document.getElementById("monthBtn").addEventListener("click", setMonth);
-  document.getElementById("dlBtn").addEventListener("click", dlExcel);
-  document.getElementById("fs").addEventListener("change", renderList);
-  document.getElementById("fe").addEventListener("change", renderList);
-  document.getElementById("fi").addEventListener("change", function(){ handleFile(this); });
-  document.querySelectorAll(".ctb").forEach(function(b) {
-    b.addEventListener("click", function(){ selCT(parseInt(b.getAttribute("data-ci"))); });
-  });
-  var uz = document.getElementById("uz");
-  uz.addEventListener("dragover", function(e){ e.preventDefault(); if(!uz.classList.contains("dis")) uz.classList.add("dov"); });
-  uz.addEventListener("dragleave", function(){ uz.classList.remove("dov"); });
-  uz.addEventListener("drop", function(e){
-    e.preventDefault(); uz.classList.remove("dov");
-    if (uz.classList.contains("dis")) return;
-    var f = e.dataTransfer.files[0];
-    if (f) { PF = f; document.getElementById("ufn").textContent = f.name; }
-  });
-  document.getElementById("fsearch").addEventListener("input", function(){ FSQ = this.value.trim().toLowerCase(); renderList(); });
-  document.querySelectorAll(".fchip").forEach(function(b) {
-    b.addEventListener("click", function(){
-      FCT = b.getAttribute("data-ct");
-      document.querySelectorAll(".fchip").forEach(function(x){
-        var ct = x.getAttribute("data-ct");
-        x.classList.remove("on","c0","c1","c2","c3","call");
-        if (ct === FCT) { x.classList.add("on"); if (ct==="all") x.classList.add("call"); else x.classList.add("c"+ct); }
-      });
-      renderList();
-    });
-  });
-  document.getElementById("fresetBtn").addEventListener("click", function(){
-    FSQ = ""; FCT = "all";
-    document.getElementById("fsearch").value = "";
-    document.querySelectorAll(".fchip").forEach(function(x){
-      x.classList.remove("on","c0","c1","c2","c3","call");
-      if (x.getAttribute("data-ct") === "all") x.classList.add("on","call");
-    });
-    renderList();
-  });
-  document.getElementById("menuCard").addEventListener("click", function(){ swPage(0); });
-  document.getElementById("menuPerm").addEventListener("click", function(){ swPage(1); });
-  document.getElementById("uAddBtn").addEventListener("click", addUser);
-}
-
-// ───────────────────────────────────────
-// 데이터 로드 (감사카드)
-// ───────────────────────────────────────
 async function loadData() {
   showOv("데이터 불러오는 중...");
-  var { data, error } = await sb
-    .from("cards")
-    .select("*")
-    .order("ship_date", { ascending: true });
+  var { data, error } = await sb.from("cards").select("*").order("ship_date", { ascending: true });
   hideOv();
-  if (error) { showToast("불러오기 실패: " + error.message); return; }
-
+  if (error) { showToast("로드 실패: " + error.message); return; }
   AD = {};
-  (data || []).forEach(function(row) {
-    var key = (row.ship_date || "").substring(0, 10);
-    if (!key) return;
+  (data || []).forEach(row => {
+    var key = row.ship_date.substring(0, 10);
     if (!AD[key]) AD[key] = [];
-    AD[key].push({
-      rowId:    row.id,
-      company:  row.company  || "",
-      manager:  row.manager  || "",
-      qty:      Number(row.qty) || 0,
-      cardType: row.card_type || "",
-      fileName: row.file_name || "",
-      fileUrl:  row.file_url  || "",
-      memo:     row.memo      || ""
-    });
+    AD[key].push({ id: row.id, company: row.company, manager: row.manager, qty: row.qty, cardType: row.card_type, memo: row.memo });
   });
-  render();
+  renderCalendar();
+  renderList();
+}
+
+function renderCalendar() {
+  var first = new Date(Y, M, 1), last = new Date(Y, M + 1, 0);
+  document.getElementById("cml").textContent = Y + "년 " + (M + 1) + "월";
+  var cg = document.getElementById("cg"); cg.innerHTML = "";
+  for (let i = 0; i < first.getDay(); i++) { let d = document.createElement("div"); d.className = "cel em"; cg.appendChild(d); }
+  for (let i = 1; i <= last.getDate(); i++) {
+    let dateStr = Y + "-" + String(M + 1).padStart(2, '0') + "-" + String(i).padStart(2, '0');
+    let cell = document.createElement("div"); cell.className = "cel";
+    if (SD === dateStr) cell.classList.add("sel");
+    cell.innerHTML = `<div class="dn">${i}</div><div class="cds"></div>`;
+    if (AD[dateStr]) {
+      AD[dateStr].slice(0, 2).forEach(item => {
+        let dot = document.createElement("div"); dot.className = "cd t0"; // 임시 색상
+        dot.textContent = item.company; cell.querySelector(".cds").appendChild(dot);
+      });
+    }
+    cell.onclick = () => { SD = dateStr; renderCalendar(); selectDate(dateStr); };
+    cg.appendChild(cell);
+  }
+}
+
+function selectDate(date) {
+  document.getElementById("pdt").textContent = date;
+  var pb = document.getElementById("pb"); pb.innerHTML = "";
+  document.getElementById("padd").style.display = (ROLE === 'master' || ROLE === 'editor') ? "block" : "none";
+  if (AD[date]) {
+    AD[date].forEach(item => {
+      let div = document.createElement("div"); div.className = "ci";
+      div.innerHTML = `<b>${item.company}</b> (${item.qty}개) - ${item.cardType}`;
+      pb.appendChild(div);
+    });
+  } else {
+    pb.innerHTML = '<div class="eh">등록된 내역이 없습니다.</div>';
+  }
 }
 
 // ───────────────────────────────────────
-// 감사카드 저장
+// 감사카드 저장 (핵심 수정 부분)
 // ───────────────────────────────────────
 async function saveCard() {
-  var dv  = document.getElementById("fd").value;
+  var dv = document.getElementById("fd").value;
   var qty = parseInt(document.getElementById("fq").value) || 0;
-  var co  = document.getElementById("fc").value.trim();
-  var mg  = document.getElementById("fm").value.trim();
-  var mo  = document.getElementById("fmo").value.trim();
-  if (SCT < 0) { showToast("감사카드 종류를 선택해주세요"); return; }
-  if (!dv)  { showToast("출고일자를 입력해주세요"); return; }
-  if (!co)  { showToast("고객사명을 입력해주세요"); return; }
-  if (qty <= 0) { showToast("수량을 입력해주세요"); return; }
+  var co = document.getElementById("fc").value.trim();
+  var mg = document.getElementById("fm").value.trim();
+  var mo = document.getElementById("fmo").value.trim();
 
-  var saveBtn = document.getElementById("saveBtn");
-saveBtn.disabled = true;
-  showOv(PF ? "파일 업로드 중..." : "저장 중...");
-
-  var fileUrl = "", fileName = "";
-
-  // 파일 업로드 (Supabase Storage)
-async function saveCard() {
-  var dv  = document.getElementById("fd").value;
-  var qty = parseInt(document.getElementById("fq").value) || 0;
-  var co  = document.getElementById("fc").value.trim();
-  var mg  = document.getElementById("fm").value.trim();
-  var mo  = document.getElementById("fmo").value.trim();
-  
-  if (SCT < 0) { showToast("감사카드 종류를 선택해주세요"); return; }
-  if (!dv)  { showToast("출고일자를 입력해주세요"); return; }
-  if (!co)  { showToast("고객사명을 입력해주세요"); return; }
-  if (qty <= 0) { showToast("수량을 입력해주세요"); return; }
+  if (SCT < 0 || !dv || !co || qty <= 0) { showToast("필수 정보를 모두 입력해주세요."); return; }
 
   var saveBtn = document.getElementById("saveBtn");
   saveBtn.disabled = true;
-  showOv(PF ? "파일 업로드 중..." : "저장 중...");
+  showOv("저장 중...");
 
   try {
-    let fileUrl = "", fileName = "";
-
-    // 1. 파일이 있는 경우 Supabase Storage에 업로드
+    let fileName = "", fileUrl = "";
     if (PF) {
-      const filePath = `${Date.now()}_${PF.name}`;
-      const { data: uploadData, error: uploadError } = await sb.storage
-        .from('cards-files') // Supabase에 생성한 버킷 이름
-        .upload(filePath, PF);
-
-      if (uploadError) throw uploadError;
-
+      const path = Date.now() + "_" + PF.name;
+      const { data: upData, error: upErr } = await sb.storage.from('cards-files').upload(path, PF);
+      if (upErr) throw upErr;
       fileName = PF.name;
-      const { data: { publicUrl } } = sb.storage.from('cards-files').getPublicUrl(filePath);
-      fileUrl = publicUrl;
+      fileUrl = sb.storage.from('cards-files').getPublicUrl(path).data.publicUrl;
     }
 
-    // 2. 데이터베이스(cards 테이블)에 저장
-    const { error: dbError } = await sb
-      .from("cards")
-      .insert([{
-        ship_date: dv,
-        company: co,
-        manager: mg,
-        qty: qty,
-        card_type: CTS[SCT],
-        file_name: fileName,
-        file_url: fileUrl,
-        memo: mo,
-        created_by: CURRENT_USER_EMAIL
-      }]);
-
-    if (dbError) throw dbError;
+    const { error: dbErr } = await sb.from("cards").insert([{
+      ship_date: dv, company: co, manager: mg, qty: qty, card_type: CTS[SCT], file_name: fileName, file_url: fileUrl, memo: mo, created_by: CURRENT_USER_EMAIL
+    }]);
+    if (dbErr) throw dbErr;
 
     showToast("저장되었습니다.");
-    closeUF();      // 등록창 닫기
-    await loadData(); // 데이터 새로고침
-  } catch (error) {
-    console.error(error);
-    showToast("오류 발생: " + error.message);
+    closeUF();
+    await loadData();
+  } catch (e) {
+    showToast("오류: " + e.message);
   } finally {
-    hideOv();
     saveBtn.disabled = false;
+    hideOv();
   }
 }
 
 // ───────────────────────────────────────
-// 감사카드 삭제
+// 이벤트 핸들링 및 보조 함수
 // ───────────────────────────────────────
-async function delCard(rowId) {
-  if (!confirm("삭제하시겠습니까?")) return;
-  showOv("삭제 중...");
-  var { error } = await sb.from("cards").delete().eq("id", rowId);
-  hideOv();
-  if (error) { showToast("삭제 실패: " + error.message); return; }
-  showToast("삭제되었습니다");
-  await loadData();
-}
-
-// ───────────────────────────────────────
-// 사용자 관리
-// ───────────────────────────────────────
-async function loadUsers() {
-  showOv("사용자 목록 로딩 중...");
-  var { data, error } = await sb.from("user_roles").select("*").order("email");
-  hideOv();
-  var ul = document.getElementById("umList");
-  ul.innerHTML = "";
-  if (!data || !data.length) {
-    ul.innerHTML = '<div style="padding:20px;text-align:center;font-size:12px;color:var(--tx3)">등록된 사용자가 없습니다</div>';
-    return;
-  }
-  data.forEach(function(u) {
-    var row = document.createElement("div"); row.className = "ur";
-    var em2 = document.createElement("div"); em2.className = "ue"; em2.textContent = u.email;
-    var rb  = document.createElement("span");
-    rb.className = "urb r" + u.role[0]; rb.textContent = u.role;
-    var actions = document.createElement("div"); actions.style.display="flex"; actions.style.gap="5px";
-    var selEl = document.createElement("select");
-    selEl.style.cssText = "font-size:11px;padding:2px 6px;border:1px solid var(--bd);border-radius:4px;font-family:inherit;background:var(--sf)";
-    ["master","editor","viewer"].forEach(function(rv){
-      var op = document.createElement("option"); op.value = rv; op.textContent = rv;
-      if (rv === u.role) op.selected = true;
-      selEl.appendChild(op);
-    });
-    var saveBtn = document.createElement("button"); saveBtn.className = "btn";
-    saveBtn.style.cssText = "padding:3px 8px;font-size:11px"; saveBtn.textContent = "변경";
-    (function(email, sel) {
-      saveBtn.addEventListener("click", async function(){
-        showOv("저장 중...");
-        var { error } = await sb.from("user_roles").upsert({ email: email, role: sel.value }, { onConflict: "email" });
-        hideOv();
-        if (error) showToast("실패: " + error.message);
-        else { showToast("변경 완료"); loadUsers(); }
-      });
-    })(u.email, selEl);
-    var delBtn = document.createElement("button"); delBtn.className = "btn";
-    delBtn.style.cssText = "padding:3px 8px;font-size:11px;color:var(--rd)"; delBtn.textContent = "삭제";
-    (function(email) {
-      delBtn.addEventListener("click", async function(){
-        if (!confirm(email + " 을(를) 삭제하시겠습니까?")) return;
-        if (email.toLowerCase() === CURRENT_USER_EMAIL.toLowerCase()) { showToast("본인 계정은 삭제할 수 없습니다."); return; }
-        showOv("삭제 중...");
-        var { error } = await sb.from("user_roles").delete().eq("email", email);
-        hideOv();
-        if (error) showToast("실패: " + error.message);
-        else { showToast("삭제 완료"); loadUsers(); }
-      });
-    })(u.email);
-    actions.appendChild(selEl); actions.appendChild(saveBtn); actions.appendChild(delBtn);
-    row.appendChild(em2); row.appendChild(rb); row.appendChild(actions);
-    ul.appendChild(row);
+function bindEvents() {
+  document.getElementById("regBtn").onclick = openUF;
+  document.getElementById("cancelBtn").onclick = closeUF;
+  document.getElementById("saveBtn").onclick = saveCard;
+  document.querySelectorAll(".ctb").forEach(b => {
+    b.onclick = () => {
+      document.querySelectorAll(".ctb").forEach(x => x.classList.remove("s0","s1","s2","s3"));
+      SCT = parseInt(b.dataset.ci);
+      b.classList.add("s"+SCT);
+    };
   });
+  document.getElementById("prevM").onclick = () => { M--; if(M<0){M=11;Y--;} renderCalendar(); };
+  document.getElementById("nextM").onclick = () => { M++; if(M>11){M=0;Y++;} renderCalendar(); };
+  document.getElementById("tab0").onclick = () => swTab(0);
+  document.getElementById("tab1").onclick = () => swTab(1);
 }
 
-async function addUser() {
-  var email = document.getElementById("uEmail").value.trim();
-  var role  = document.getElementById("uRole").value;
-  if (!email) { showToast("이메일을 입력해주세요"); return; }
-  if (!email.includes("@")) { showToast("올바른 이메일을 입력해주세요"); return; }
-  showOv("추가 중...");
-  var { error } = await sb.from("user_roles").upsert({ email: email.toLowerCase(), role: role }, { onConflict: "email" });
-  hideOv();
-  if (error) { showToast("실패: " + error.message); return; }
-  document.getElementById("uEmail").value = "";
-  showToast("추가 완료!");
-  loadUsers();
+function swTab(idx) {
+  document.querySelectorAll(".tabb").forEach((t, i) => t.classList.toggle("active", i === idx));
+  document.querySelectorAll(".tp").forEach((p, i) => p.classList.toggle("active", i === idx));
 }
 
-// ───────────────────────────────────────
-// UI 헬퍼
-// ───────────────────────────────────────
-function swTab(i) {
-  document.getElementById("tab0").classList.toggle("active", i===0);
-  document.getElementById("tab1").classList.toggle("active", i===1);
-  document.getElementById("tp0").classList.toggle("active", i===0);
-  document.getElementById("tp1").classList.toggle("active", i===1);
-  if (i===1) { if (!document.getElementById("fs").value) setMonth(); else renderList(); }
+function openUF() { 
+  document.getElementById("uf").classList.add("show"); 
+  if(SD) document.getElementById("fd").value = SD;
 }
-function swPage(p) {
-  var mc=document.getElementById("menuCard"), mp=document.getElementById("menuPerm");
-  var cardArea=document.querySelector(".ct > .tabbar");
-  var tp0=document.getElementById("tp0"), tp1=document.getElementById("tp1"), tp2=document.getElementById("tp2");
-  if (p===0) {
-    mc.classList.add("active"); mp.classList.remove("active");
-    cardArea.style.display=""; tp0.style.display=""; tp1.style.display=""; tp2.style.display="none";
-    var at=document.querySelector(".tabb.active");
-    if (at && at.id==="tab1") { tp1.classList.add("active"); tp0.classList.remove("active"); }
-    else { tp0.classList.add("active"); tp1.classList.remove("active"); }
-  } else {
-    mc.classList.remove("active"); mp.classList.add("active");
-    cardArea.style.display="none"; tp0.style.display="none"; tp1.style.display="none"; tp2.style.display="block";
-    loadUsers();
-  }
-}
-function selCT(i) {
-  SCT = i;
-  document.querySelectorAll(".ctb").forEach(function(b,j){ b.className="ctb"+(j===i?" s"+i:""); });
-  var uz=document.getElementById("uz"), lb=document.getElementById("uol");
-  if (NF.indexOf(i)>=0) { uz.classList.remove("dis"); lb.textContent="PPT 파일 첨부 (권장)"; lb.style.color="var(--ac)"; }
-  else { uz.classList.add("dis"); lb.textContent="파일 첨부 불필요"; lb.style.color="var(--tx3)"; PF=null; document.getElementById("fi").value=""; document.getElementById("ufn").textContent=""; }
-}
-function gk(y,m,d){ return y+"-"+String(m+1).padStart(2,"0")+"-"+String(d).padStart(2,"0"); }
-function d2k(d){ return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); }
-function getWR(){ var n=new Date(),s=new Date(n); s.setDate(n.getDate()-n.getDay()); s.setHours(0,0,0,0); var e=new Date(s); e.setDate(s.getDate()+6); e.setHours(23,59,59,999); return {s:s,e:e}; }
-function setToday(){ var n=new Date(),k=gk(n.getFullYear(),n.getMonth(),n.getDate()); document.getElementById("fs").value=k; document.getElementById("fe").value=k; renderList(); }
-function setWeek(){ var r=getWR(); document.getElementById("fs").value=d2k(r.s); document.getElementById("fe").value=d2k(r.e); renderList(); }
-function setMonth(){ var n=new Date(); document.getElementById("fs").value=d2k(new Date(n.getFullYear(),n.getMonth(),1)); document.getElementById("fe").value=d2k(new Date(n.getFullYear(),n.getMonth()+1,0)); renderList(); }
-function chMon(d){ M+=d; if(M>11){M=0;Y++;} if(M<0){M=11;Y--;} render(); }
-
-function updStats() {
-  var n=new Date(), tk=gk(n.getFullYear(),n.getMonth(),n.getDate()), r=getWR();
-  var tQ=0,tC=0,wQ=0,wC=0,mQ=0,mC=0;
-  Object.keys(AD).forEach(function(k){
-    var cs=AD[k], d=new Date(k+"T00:00:00");
-    if(k===tk) cs.forEach(function(c){tQ+=c.qty;tC++;});
-    if(d>=r.s&&d<=r.e) cs.forEach(function(c){wQ+=c.qty;wC++;});
-    if(d.getFullYear()===n.getFullYear()&&d.getMonth()===n.getMonth()) cs.forEach(function(c){mQ+=c.qty;mC++;});
-  });
-  document.getElementById("s0").textContent=tQ.toLocaleString();
-  document.getElementById("s0s").textContent="오늘 출고 건수 "+tC+"건";
-  document.getElementById("s1").textContent=wQ.toLocaleString();
-  document.getElementById("s1s").textContent="이번주 출고 건수 "+wC+"건";
-  document.getElementById("s2").textContent=mQ.toLocaleString();
-  document.getElementById("s2s").textContent="이번달 출고 건수 "+mC+"건";
+function closeUF() { 
+  document.getElementById("uf").classList.remove("show"); 
+  PF = null; SCT = -1; 
+  document.querySelectorAll(".ctb").forEach(x => x.classList.remove("s0","s1","s2","s3"));
+  document.getElementById("ufn").textContent = "";
 }
 
-function render() {
-  document.getElementById("cml").textContent = Y+"년 "+MN[M];
-  var fd=new Date(Y,M,1).getDay(), dim=new Date(Y,M+1,0).getDate(), n=new Date(), g=document.getElementById("cg");
-  g.innerHTML="";
-  for(var i=0;i<fd;i++){ var ec=document.createElement("div"); ec.className="cel em"; g.appendChild(ec); }
-  for(var day=1;day<=dim;day++){
-    var k=gk(Y,M,day), cs=AD[k]||[], it=n.getFullYear()===Y&&n.getMonth()===M&&n.getDate()===day;
-    var cell=document.createElement("div");
-    cell.className="cel"+(SD===k?" sel":"")+(it?" tod":"");
-    (function(x){ cell.addEventListener("click",function(){ SD=x; if(document.getElementById("uf").classList.contains("show")) document.getElementById("fd").value=x; render(); }); })(k);
-    var dn=document.createElement("div"); dn.className="dn"; dn.textContent=day; cell.appendChild(dn);
-    if(cs.length>0){
-      var dw=document.createElement("div"); dw.className="cds";
-      for(var j=0;j<Math.min(cs.length,2);j++){
-        var ci2=CTS.indexOf(cs[j].cardType);
-        var dot=document.createElement("div"); dot.className="cd "+(ci2>=0?TC[ci2]:TC[3]);
-        dot.textContent=cs[j].company; dw.appendChild(dot);
-      }
-      if(cs.length>2){ var mo2=document.createElement("div"); mo2.className="cd more"; mo2.textContent="+"+(cs.length-2); dw.appendChild(mo2); }
-      cell.appendChild(dw);
-    }
-    g.appendChild(cell);
-  }
-  updStats(); renderPanel();
-}
-
-function renderPanel() {
-  if(!SD) return;
-  var p=SD.split("-");
-  document.getElementById("pdt").textContent=parseInt(p[1])+"월 "+parseInt(p[2])+"일 출고";
-  document.getElementById("pds").textContent=p[0]+"년 "+WD[new Date(SD+"T00:00:00").getDay()]+"요일";
-  document.getElementById("padd").style.display="block";
-  var body=document.getElementById("pb"), cs=AD[SD]||[];
-  if(!cs.length){
-    body.innerHTML="";
-    var eh=document.createElement("div"); eh.className="eh";
-    eh.appendChild(document.createTextNode("등록된 감사카드가 없습니다"));
-    var br=document.createElement("br"); eh.appendChild(br);
-    var sm=document.createElement("span"); sm.style.fontSize="11px"; sm.textContent="아래 버튼으로 추가해보세요"; eh.appendChild(sm);
-    body.appendChild(eh); return;
-  }
-  body.innerHTML="";
-  var list=document.createElement("div"); list.className="cl";
-  cs.forEach(function(c){
-    var item=document.createElement("div"); item.className="ci";
-    var hf=c.fileUrl&&c.fileName, ci3=CTS.indexOf(c.cardType), tc2=ci3>=0?TBC[ci3]:TBC[3];
-    var top=document.createElement("div"); top.className="cit";
-    var ft=document.createElement("div"); ft.className=hf?"ft":"ft nf"; ft.textContent=hf?"PPT":"—";
-    var info=document.createElement("div"); info.className="cii";
-    var nm=document.createElement("div"); nm.className="cin"; nm.textContent=c.fileName||"파일 없음";
-    var cp=document.createElement("div"); cp.className="cic"; cp.textContent=c.company+(c.manager?" · "+c.manager:"");
-    info.appendChild(nm); info.appendChild(cp);
-    top.appendChild(ft); top.appendChild(info);
-    var mid=document.createElement("div"); mid.className="cim";
-    var tbg=document.createElement("span"); tbg.className="tbg "+tc2; tbg.textContent=c.cardType;
-    var qt=document.createElement("span"); qt.className="qt"; qt.textContent=Number(c.qty).toLocaleString()+"개";
-    mid.appendChild(tbg); mid.appendChild(qt);
-    item.appendChild(top); item.appendChild(mid);
-    if(c.memo){
-      var mb=document.createElement("div"); mb.className="mb";
-      var mbl=document.createElement("div"); mbl.className="mbl"; mbl.textContent="메모";
-      mb.appendChild(mbl); mb.appendChild(document.createTextNode(c.memo));
-      item.appendChild(mb);
-    }
-    var act=document.createElement("div"); act.className="cia"; act.style.marginTop="5px";
-    if(hf){
-      var dlb=document.createElement("button"); dlb.className="ab"; dlb.title="다운로드";
-      dlb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-width="2" d="M12 3v12"></path><path stroke-width="2" d="M7 10l5 5 5-5"></path><path stroke-width="2" d="M5 21h14"></path></svg>';
-      (function(url){ dlb.addEventListener("click",function(){ window.open(url,"_blank"); }); })(c.fileUrl);
-      act.appendChild(dlb);
-    }
-    if(ROLE==="master"||ROLE==="editor"){
-      var delb=document.createElement("button"); delb.className="ab dl"; delb.style.marginLeft="auto";
-      delb.innerHTML="🗑️"; delb.style.cssText="font-size:13px;line-height:1;border:none;background:transparent;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:var(--rs)";
-      (function(rid){ delb.addEventListener("click",function(){ delCard(rid); }); })(c.rowId);
-      act.appendChild(delb);
-    }
-    item.appendChild(act);
-    list.appendChild(item);
-  });
-  body.appendChild(list);
-}
-
-function openUF() {
-  if(ROLE!=="master"&&ROLE!=="editor"){ showToast("등록 권한이 없습니다."); return; }
-  document.getElementById("uf").classList.add("show");
-  if(SD) document.getElementById("fd").value=SD;
-  document.getElementById("uf").scrollIntoView({behavior:"smooth",block:"nearest"});
-}
-function closeUF() {
-  document.getElementById("uf").classList.remove("show");
-  ["fi","fc","fm","fq","fmo"].forEach(function(id){ document.getElementById(id).value=""; });
-  document.getElementById("ufn").textContent="";
-  SCT=-1; PF=null;
-  document.querySelectorAll(".ctb").forEach(function(b){ b.className="ctb"; });
-  var uz=document.getElementById("uz"); uz.classList.remove("dis");
-  document.getElementById("uol").textContent="파일 첨부 (선택)";
-  document.getElementById("uol").style.color="var(--ac)";
-}
-function handleFile(i){ var f=i.files[0]; if(!f) return; PF=f; document.getElementById("ufn").textContent=f.name; }
-
-function getRows() {
-  var sv=document.getElementById("fs").value, ev=document.getElementById("fe").value, rows=[];
-  Object.keys(AD).sort().forEach(function(k){
-    if(sv&&k<sv) return; if(ev&&k>ev) return;
-    AD[k].forEach(function(c){
-      if(FSQ&&(c.company||"").toLowerCase().indexOf(FSQ)<0) return;
-      if(FCT!=="all"&&CTS.indexOf(c.cardType||"")!==parseInt(FCT)) return;
-      rows.push({date:k,company:c.company||"",manager:c.manager||"",cardType:c.cardType||"",qty:Number(c.qty)||0,memo:c.memo||""});
-    });
-  });
-  return rows;
+function showOv(m) { document.getElementById("lt3").textContent = m; document.getElementById("ov").classList.add("show"); }
+function hideOv() { document.getElementById("ov").classList.remove("show"); }
+function showToast(m) { 
+  var t = document.getElementById("tst"); t.textContent = m; t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 3000);
 }
 
 function renderList() {
-  var rows=getRows(), tb=document.getElementById("dtb");
-  tb.innerHTML="";
-  if(!rows.length){
-    var er=document.createElement("tr"); er.className="er";
-    var td=document.createElement("td"); td.setAttribute("colspan","6"); td.textContent="조회된 데이터가 없어요";
-    er.appendChild(td); tb.appendChild(er);
-    document.getElementById("rinfo").textContent="0건"; return;
-  }
-  var groups={};
-  rows.forEach(function(r){ if(!groups[r.date]) groups[r.date]=[]; groups[r.date].push(r); });
-  var tQ=0,tC=0;
-  Object.keys(groups).sort().forEach(function(date){
-    var items=groups[date], dq=items.reduce(function(s,r){return s+r.qty;},0), p=date.split("-");
-    var gr=document.createElement("tr"); gr.className="gr";
-    var gtd=document.createElement("td"); gtd.setAttribute("colspan","6");
-    var gdl=document.createElement("span"); gdl.className="gdl";
-    gdl.textContent=parseInt(p[1])+"월 "+parseInt(p[2])+"일 ("+WD[new Date(date+"T00:00:00").getDay()]+")";
-    var gsm=document.createElement("span"); gsm.className="gsm";
-    gsm.textContent="총 "+items.length+"건 · "+dq.toLocaleString()+"개";
-    gtd.appendChild(gdl); gtd.appendChild(gsm); gr.appendChild(gtd); tb.appendChild(gr);
-    items.forEach(function(r){
-      var tr=document.createElement("tr"), ci=CTS.indexOf(r.cardType), tc=ci>=0?TBC[ci]:TBC[3];
-      var cells=[
-        {cls:"dc",txt:r.date},{cls:"cc2",txt:r.company},{cls:"",txt:r.manager||"—"},
-        {cls:"",html:'<span class="tbg '+tc+'">'+r.cardType+"</span>"},
-        {cls:"qc",txt:r.qty.toLocaleString()},{cls:"mc",txt:r.memo||"—",title:r.memo}
-      ];
-      cells.forEach(function(c){
-        var td2=document.createElement("td");
-        if(c.cls) td2.className=c.cls;
-        if(c.title) td2.setAttribute("title",c.title);
-        if(c.html) td2.innerHTML=c.html; else td2.textContent=c.txt;
-        tr.appendChild(td2);
-      });
-      tb.appendChild(tr); tQ+=r.qty; tC++;
-    });
+  var tb = document.getElementById("dtb"); tb.innerHTML = "";
+  var all = []; Object.keys(AD).forEach(k => AD[k].forEach(i => all.push({...i, date: k})));
+  all.forEach(r => {
+    var tr = document.createElement("tr");
+    tr.innerHTML = `<td>${r.date}</td><td>${r.company}</td><td>${r.manager||''}</td><td>${r.cardType}</td><td align="right">${r.qty}</td><td>${r.memo||''}</td>`;
+    tb.appendChild(tr);
   });
-  var tr2=document.createElement("tr"); tr2.className="tr2";
-  var td1=document.createElement("td"); td1.setAttribute("colspan","4"); td1.style.cssText="text-align:right;color:var(--tx2);font-size:11px"; td1.textContent="합계";
-  var td4=document.createElement("td"); td4.className="qc"; td4.textContent=tQ.toLocaleString();
-  var td5=document.createElement("td");
-  tr2.appendChild(td1); tr2.appendChild(td4); tr2.appendChild(td5);
-  tb.appendChild(tr2);
-  document.getElementById("rinfo").textContent=tC+"건 · "+tQ.toLocaleString()+"개";
 }
-
-function dlExcel() {
-  var rows=getRows();
-  if(!rows.length){ showToast("다운로드할 데이터가 없어요"); return; }
-  var sv=document.getElementById("fs").value||"전체", ev=document.getElementById("fe").value||"전체";
-  var lines=["﻿출고일자,기업명,담당자,감사카드종류,수량,메모"];
-  rows.forEach(function(r){
-    lines.push([r.date,'"'+(r.company||"").replace(/"/g,'""')+'"','"'+(r.manager||"").replace(/"/g,'""')+'"','"'+(r.cardType||"").replace(/"/g,'""')+'"',r.qty,'"'+(r.memo||"").replace(/"/g,'""')+'"'].join(","));
-  });
-  var b=new Blob([lines.join("\n")],{type:"text/csv;charset=utf-8;"}), u=URL.createObjectURL(b), a=document.createElement("a");
-  a.href=u; a.download="설로인_감사카드출고현황_"+sv+"_"+ev+".csv"; a.click(); URL.revokeObjectURL(u);
-  showToast("다운로드 완료!");
-}
-
-function showOv(m){ document.getElementById("lt3").textContent=m||"처리 중..."; document.getElementById("ov").classList.add("show"); }
-function hideOv(){ document.getElementById("ov").classList.remove("show"); }
-function showToast(m){ var t=document.getElementById("tst"); t.textContent=m; t.classList.add("show"); setTimeout(function(){ t.classList.remove("show"); },2800); }
 </script>
 </body>
 </html>
