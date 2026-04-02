@@ -321,7 +321,7 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
 // ───────────────────────────────────────
 const SUPA_URL = "https://mvjbvyeiyrmtgnbydghr.supabase.co";
 const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12amJ2eWVpeXJtdGduYnlkZ2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTczMzAsImV4cCI6MjA5MDY3MzMzMH0.CsWrPRbXLcmVmYyj85-fDu_8BiaRNmCHDPw-30a_pEs";
-const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
 
 // ───────────────────────────────────────
 // 전역 변수
@@ -349,7 +349,7 @@ async function doLogin() {
   errEl.textContent = "";
   if (!email || !pw) { errEl.textContent = "이메일과 비밀번호를 입력해주세요."; return; }
   showOv("로그인 중...");
-  var { data, error } = await supabase.auth.signInWithPassword({ email, password: pw });
+  var { data, error } = await sb.auth.signInWithPassword({ email, password: pw });
   hideOv();
   if (error) { errEl.textContent = "로그인 실패: 이메일 또는 비밀번호를 확인해주세요."; return; }
   CURRENT_USER_EMAIL = email;
@@ -357,7 +357,7 @@ async function doLogin() {
 }
 
 async function doLogout() {
-  await supabase.auth.signOut();
+  await sb.auth.signOut();
   document.getElementById("mainApp").style.display = "none";
   document.getElementById("loginPage").style.display = "flex";
   document.getElementById("loginEmail").value = "";
@@ -367,7 +367,7 @@ async function doLogout() {
 // 페이지 로드 시 이미 로그인된 세션 확인
 window.addEventListener("load", async function() {
   showOv("확인 중...");
-  var { data: { session } } = await supabase.auth.getSession();
+  var { data: { session } } = await sb.auth.getSession();
   hideOv();
   if (session) {
     CURRENT_USER_EMAIL = session.user.email;
@@ -391,7 +391,7 @@ async function startApp() {
 // 권한 로드
 // ───────────────────────────────────────
 async function loadRole() {
-  var { data, error } = await supabase
+  var { data, error } = await sb
     .from("user_roles")
     .select("role")
     .eq("email", CURRENT_USER_EMAIL.toLowerCase())
@@ -467,7 +467,7 @@ function bindEvents() {
 // ───────────────────────────────────────
 async function loadData() {
   showOv("데이터 불러오는 중...");
-  var { data, error } = await supabase
+  var { data, error } = await sb
     .from("cards")
     .select("*")
     .order("ship_date", { ascending: true });
@@ -516,19 +516,19 @@ async function saveCard() {
   // 파일 업로드 (Supabase Storage)
   if (PF) {
     var filePath = Date.now() + "_" + PF.name;
-    var { data: upData, error: upErr } = await supabase.storage
+    var { data: upData, error: upErr } = await sb.storage
       .from("card-files")
       .upload(filePath, PF);
     if (upErr) {
       hideOv(); sb.disabled = false;
       showToast("파일 업로드 실패: " + upErr.message); return;
     }
-    var { data: urlData } = supabase.storage.from("card-files").getPublicUrl(filePath);
+    var { data: urlData } = sb.storage.from("card-files").getPublicUrl(filePath);
     fileUrl  = urlData.publicUrl;
     fileName = PF.name;
   }
 
-  var { error } = await supabase.from("cards").insert({
+  var { error } = await sb.from("cards").insert({
     created_at: new Date().toISOString(),
     ship_date:  dv,
     company:    co,
@@ -553,7 +553,7 @@ async function saveCard() {
 async function delCard(rowId) {
   if (!confirm("삭제하시겠습니까?")) return;
   showOv("삭제 중...");
-  var { error } = await supabase.from("cards").delete().eq("id", rowId);
+  var { error } = await sb.from("cards").delete().eq("id", rowId);
   hideOv();
   if (error) { showToast("삭제 실패: " + error.message); return; }
   showToast("삭제되었습니다");
@@ -565,7 +565,7 @@ async function delCard(rowId) {
 // ───────────────────────────────────────
 async function loadUsers() {
   showOv("사용자 목록 로딩 중...");
-  var { data, error } = await supabase.from("user_roles").select("*").order("email");
+  var { data, error } = await sb.from("user_roles").select("*").order("email");
   hideOv();
   var ul = document.getElementById("umList");
   ul.innerHTML = "";
@@ -591,7 +591,7 @@ async function loadUsers() {
     (function(email, sel) {
       saveBtn.addEventListener("click", async function(){
         showOv("저장 중...");
-        var { error } = await supabase.from("user_roles").upsert({ email: email, role: sel.value }, { onConflict: "email" });
+        var { error } = await sb.from("user_roles").upsert({ email: email, role: sel.value }, { onConflict: "email" });
         hideOv();
         if (error) showToast("실패: " + error.message);
         else { showToast("변경 완료"); loadUsers(); }
@@ -604,7 +604,7 @@ async function loadUsers() {
         if (!confirm(email + " 을(를) 삭제하시겠습니까?")) return;
         if (email.toLowerCase() === CURRENT_USER_EMAIL.toLowerCase()) { showToast("본인 계정은 삭제할 수 없습니다."); return; }
         showOv("삭제 중...");
-        var { error } = await supabase.from("user_roles").delete().eq("email", email);
+        var { error } = await sb.from("user_roles").delete().eq("email", email);
         hideOv();
         if (error) showToast("실패: " + error.message);
         else { showToast("삭제 완료"); loadUsers(); }
@@ -622,7 +622,7 @@ async function addUser() {
   if (!email) { showToast("이메일을 입력해주세요"); return; }
   if (!email.includes("@")) { showToast("올바른 이메일을 입력해주세요"); return; }
   showOv("추가 중...");
-  var { error } = await supabase.from("user_roles").upsert({ email: email.toLowerCase(), role: role }, { onConflict: "email" });
+  var { error } = await sb.from("user_roles").upsert({ email: email.toLowerCase(), role: role }, { onConflict: "email" });
   hideOv();
   if (error) { showToast("실패: " + error.message); return; }
   document.getElementById("uEmail").value = "";
