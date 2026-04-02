@@ -507,8 +507,8 @@ async function saveCard() {
   if (!co)  { showToast("고객사명을 입력해주세요"); return; }
   if (qty <= 0) { showToast("수량을 입력해주세요"); return; }
 
-  var sb = document.getElementById("saveBtn");
-  sb.disabled = true;
+  var saveBtn = document.getElementById("saveBtn");
+saveBtn.disabled = true;
   showOv(PF ? "파일 업로드 중..." : "저장 중...");
 
   var fileUrl = "", fileName = "";
@@ -520,7 +520,7 @@ async function saveCard() {
       .from("card-files")
       .upload(filePath, PF);
     if (upErr) {
-      hideOv(); sb.disabled = false;
+      hideOv(); saveBtn.disabled = false;
       showToast("파일 업로드 실패: " + upErr.message); return;
     }
     var { data: urlData } = sb.storage.from("card-files").getPublicUrl(filePath);
