@@ -8,70 +8,56 @@
 <style>
 :root{--bg:#F7F5F2;--sf:#FFF;--sf2:#F0EDE8;--bd:#E2DDD6;--bd2:#CBC4BA;--tx:#1A1714;--tx2:#6B6560;--tx3:#9E9890;--ac:#C17B3F;--ac2:#FDF3E8;--ac3:#8B5220;--bl:#2B6CB0;--bl2:#EBF4FF;--gn:#276749;--gn2:#E6F4EE;--rd:#9B2335;--rd2:#FDEDF0;--r:10px;--rs:6px}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px;line-height:1.6}
+body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
 .app{display:grid;grid-template-columns:220px 1fr;min-height:100vh}
-.sb{background:var(--tx);color:#fff;padding:24px 16px;display:flex;flex-direction:column;height:100vh;overflow-y:auto}
+.sb{background:var(--tx);color:#fff;padding:24px 16px;display:flex;flex-direction:column;height:100vh}
 .logo{display:flex;align-items:center;gap:10px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.1);margin-bottom:24px}
-.lm{width:34px;height:34px;background:var(--ac);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-size:12px;font-weight:500;color:#fff}
-.lt{font-size:13px;font-weight:700}.ls{font-size:10px;color:rgba(255,255,255,.4);margin-top:1px}
-.ni{display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:var(--rs);font-size:13px;color:rgba(255,255,255,.6);cursor:pointer}
-.ni.active{background:var(--ac);color:#fff}.ni svg{width:15px;height:15px}
+.lm{width:34px;height:34px;background:var(--ac);border-radius:var(--rs);display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;font-weight:700}
 .mn{display:flex;flex-direction:column}
 .top{background:var(--sf);border-bottom:1px solid var(--bd);padding:14px 24px;display:flex;align-items:center;justify-content:space-between}
-.tt{font-size:15px;font-weight:700}.ts{font-size:11px;color:var(--tx2)}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--bd2);background:var(--sf);font-family:inherit}
+.tt{font-size:15px;font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:var(--rs);font-size:13px;cursor:pointer;border:1px solid var(--bd2);background:var(--sf);font-family:inherit}
 .btn.pr{background:var(--ac);color:#fff;border-color:var(--ac)}
 .ct{padding:20px 24px;flex:1}
-.tabbar{display:flex;border-bottom:1px solid var(--bd);margin-bottom:20px}
-.tabb{padding:10px 20px;font-size:13px;cursor:pointer;background:none;border:none;border-bottom:2px solid transparent}
-.tabb.active{color:var(--ac);border-bottom-color:var(--ac);font-weight:700}
-.tp{display:none}.tp.active{display:block}
 .cpw{display:grid;grid-template-columns:1fr 360px;gap:14px}
 .cc{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
 .cn{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid var(--bd)}
 .cg{display:grid;grid-template-columns:repeat(7,1fr)}
-.cel{min-height:72px;padding:7px;border-bottom:1px solid var(--bd);border-right:1px solid var(--bd);cursor:pointer}
-.cel.sel{background:var(--ac2);outline:2px solid var(--ac);outline-offset:-2px}
-.dn{width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px}
-.uf{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:18px;margin-top:14px;display:none}
+.cel{min-height:80px;padding:8px;border-bottom:1px solid var(--bd);border-right:1px solid var(--bd);cursor:pointer}
+.cel.sel{background:var(--ac2);box-shadow:inset 0 0 0 2px var(--ac)}
+.dn{font-size:12px;margin-bottom:4px}
+.uf{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:20px;margin-top:20px;display:none}
 .uf.show{display:block}
-.ctg{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}
-.ctb{padding:8px 4px;border-radius:var(--rs);border:1.5px solid var(--bd);background:var(--sf2);font-size:11px;cursor:pointer;text-align:center}
-/* 버튼 선택 시 색상 */
-.ctb.s0{background:var(--gn2);border-color:var(--gn);color:var(--gn);font-weight:700}
-.ctb.s1{background:var(--bl2);border-color:var(--bl);color:var(--bl);font-weight:700}
-.ctb.s2{background:var(--ac2);border-color:var(--ac);color:var(--ac3);font-weight:700}
-.ctb.s3{background:var(--sf2);border-color:var(--tx);color:var(--tx);font-weight:700}
-.fg{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.fgr{display:flex;flex-direction:column;gap:4px}
-.fgr label{font-size:10px;font-weight:700}
-.fgr input{padding:7px 10px;border:1px solid var(--bd);border-radius:var(--rs)}
-.ov{display:none;position:fixed;inset:0;background:rgba(255,255,255,.85);align-items:center;justify-content:center;flex-direction:column;z-index:9999}
+.ctg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:15px}
+.ctb{padding:10px 5px;border-radius:var(--rs);border:1.5px solid var(--bd);background:var(--sf2);font-size:11px;cursor:pointer;text-align:center}
+.ctb.selected{background:var(--ac);color:#fff;border-color:var(--ac);font-weight:700}
+.fg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:15px}
+.fgr{display:flex;flex-direction:column;gap:5px}
+.fgr label{font-size:11px;font-weight:700;color:var(--tx2)}
+.fgr input{padding:8px;border:1px solid var(--bd);border-radius:var(--rs);font-family:inherit}
+.ov{display:none;position:fixed;inset:0;background:rgba(255,255,255,.8);align-items:center;justify-content:center;z-index:9999}
 .ov.show{display:flex}
-.tst{position:fixed;bottom:24px;right:20px;background:var(--tx);color:#fff;padding:10px 16px;border-radius:var(--r);opacity:0;transition:.25s;z-index:9999}
+.tst{position:fixed;bottom:20px;right:20px;background:#333;color:#fff;padding:12px 20px;border-radius:8px;opacity:0;transition:0.3s;z-index:9999}
 .tst.show{opacity:1}
+.item-card{background:#f9f9f9; padding:10px; border-radius:8px; margin-bottom:8px; border:1px solid var(--bd)}
 </style>
 </head>
 <body>
 
-<div class="ov" id="ov"><div style="margin-bottom:10px">⏳</div><div id="lt3">처리 중...</div></div>
+<div class="ov" id="ov">🔄 처리 중...</div>
 <div class="tst" id="tst"></div>
 
-<div class="app" id="mainApp">
-<aside class="sb">
-  <div class="logo"><div class="lm">SL</div><div><div class="lt">설로인</div></div></div>
-  <div class="ni active">감사카드 관리</div>
-</aside>
-<main class="mn">
-  <div class="top">
-    <div><div class="tt">감사카드 출고 관리</div><div class="ts" id="tdate"></div></div>
-    <button class="btn pr" id="regBtn">+감사카드 등록</button>
-  </div>
-  <div class="ct">
-    <div class="tabbar">
-      <button class="tabb active" id="tab0">달력</button>
+<div class="app">
+  <aside class="sb">
+    <div class="logo"><div class="lm">SL</div><div><div class="lt">설로인</div></div></div>
+    <div style="font-size:13px; color:rgba(255,255,255,0.6)">감사카드 관리</div>
+  </aside>
+  <main class="mn">
+    <div class="top">
+      <div class="tt">감사카드 출고 관리</div>
+      <button class="btn pr" id="regBtn">+ 감사카드 등록</button>
     </div>
-    <div class="tp active" id="tp0">
+    <div class="ct">
       <div class="cpw">
         <div class="cc">
           <div class="cn">
@@ -81,174 +67,169 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
           </div>
           <div class="cg" id="cg"></div>
         </div>
-        <div id="sideInfo" style="background:#fff; border:1px solid var(--bd); padding:15px; border-radius:10px;">
-            <h3 id="pdt">날짜를 선택하세요</h3>
-            <div id="pb" style="margin-top:10px">내역이 표시됩니다.</div>
+        <div style="background:#fff; border:1px solid var(--bd); padding:20px; border-radius:10px;">
+          <h3 id="pdt">날짜를 선택하세요</h3>
+          <div id="pb" style="margin-top:15px"></div>
         </div>
       </div>
 
       <div class="uf" id="uf">
-        <h3>감사카드 등록</h3>
+        <h3>새 감사카드 등록</h3>
         <div style="margin:15px 0">
-          <div style="font-size:11px; font-weight:700; margin-bottom:8px">카드 종류 선택 <span style="color:red">*</span></div>
-          <div class="ctg">
-            <button class="ctb" data-ci="0">상시감카</button>
-            <button class="ctb" data-ci="1">메세지감카</button>
-            <button class="ctb" data-ci="2">자체감카</button>
-            <button class="ctb" data-ci="3">감카없음</button>
+          <div style="font-size:12px; font-weight:700; margin-bottom:8px">카드 종류 <span style="color:red">*</span></div>
+          <div class="ctg" id="typeGroup">
+            <button class="ctb" data-val="상시감카">상시감카</button>
+            <button class="ctb" data-val="메세지감카">메세지감카</button>
+            <button class="ctb" data-val="자체감카">자체감카</button>
+            <button class="ctb" data-val="감카없음">감카없음</button>
           </div>
         </div>
         <div class="fg">
           <div class="fgr"><label>출고일자 *</label><input type="date" id="fd"></div>
-          <div class="fgr"><label>수량 *</label><input type="number" id="fq"></div>
-          <div class="fgr"><label>고객사명 *</label><input type="text" id="fc"></div>
-          <div class="fgr"><label>담당자명</label><input type="text" id="fm"></div>
+          <div class="fgr"><label>수량 *</label><input type="number" id="fq" placeholder="0"></div>
+          <div class="fgr"><label>고객사명 *</label><input type="text" id="fc" placeholder="업체명 입력"></div>
+          <div class="fgr"><label>담당자명</label><input type="text" id="fm" placeholder="성함 입력"></div>
         </div>
-        <div style="margin-bottom:15px">
-            <label style="font-size:10px; font-weight:700">메모</label>
-            <textarea id="fmo" style="width:100%; height:60px; border:1px solid var(--bd); border-radius:6px; padding:8px;"></textarea>
+        <div class="fgr" style="margin-bottom:15px">
+          <label>메모</label>
+          <input type="text" id="fmo" placeholder="기타 참고사항">
         </div>
-        <div style="text-align:right">
+        <div style="text-align:right; gap:10px; display:flex; justify-content:flex-end">
           <button class="btn" id="cancelBtn">취소</button>
-          <button class="btn pr" id="saveBtn">저장하기</button>
+          <button class="btn pr" id="saveBtn">데이터 저장하기</button>
         </div>
       </div>
     </div>
-  </div>
-</main>
+  </main>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
 <script>
-// 1. 설정
 const SUPA_URL = "https://mvjbvyeiyrmtgnbydghr.supabase.co";
 const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12amJ2eWVpeXJtdGduYnlkZ2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTczMzAsImV4cCI6MjA5MDY3MzMzMH0.CsWrPRbXLcmVmYyj85-fDu_8BiaRNmCHDPw-30a_pEs";
 const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 
-let Y, M, SD = null, AD = {}, SCT = -1;
-const CTS = ["상시감카", "메세지감카", "자체감카", "감카없음"];
+let Y, M, SD = null, AD = {}, selectedType = "";
 
-// 2. 초기화
 window.onload = () => {
-    let n = new Date(); Y = n.getFullYear(); M = n.getMonth();
-    document.getElementById("tdate").textContent = Y + "년 " + (M+1) + "월";
-    bindEvents();
-    loadData();
+  let n = new Date(); Y = n.getFullYear(); M = n.getMonth();
+  init();
+  loadData();
 };
 
+function init() {
+  document.getElementById("prevM").onclick = () => { M--; if(M<0){M=11; Y--;} renderCalendar(); };
+  document.getElementById("nextM").onclick = () => { M++; if(M>11){M=0; Y++;} renderCalendar(); };
+  document.getElementById("regBtn").onclick = () => document.getElementById("uf").classList.toggle("show");
+  document.getElementById("cancelBtn").onclick = () => document.getElementById("uf").classList.remove("show");
+  document.getElementById("saveBtn").onclick = saveCard;
+
+  document.querySelectorAll(".ctb").forEach(btn => {
+    btn.onclick = () => {
+      document.querySelectorAll(".ctb").forEach(b => b.classList.remove("selected"));
+      btn.classList.add("selected");
+      selectedType = btn.dataset.val;
+    };
+  });
+}
+
 async function loadData() {
-    showOv("데이터 로드 중...");
-    const { data, error } = await sb.from("cards").select("*");
-    hideOv();
-    if(error) return showToast("데이터 로드 실패");
-    
-    AD = {};
-    data.forEach(r => {
-        if(!AD[r.ship_date]) AD[r.ship_date] = [];
-        AD[r.ship_date].push(r);
-    });
-    renderCalendar();
+  showOv(true);
+  const { data, error } = await sb.from("cards").select("*");
+  showOv(false);
+  if(error) return showToast("데이터 로드 실패");
+  
+  AD = {};
+  data.forEach(r => {
+    if(!AD[r.ship_date]) AD[r.ship_date] = [];
+    AD[r.ship_date].push(r);
+  });
+  renderCalendar();
 }
 
 function renderCalendar() {
-    const cg = document.getElementById("cg"); cg.innerHTML = "";
-    document.getElementById("cml").textContent = Y + "년 " + (M+1) + "월";
-    
-    let first = new Date(Y, M, 1).getDay();
-    let last = new Date(Y, M+1, 0).getDate();
+  const cg = document.getElementById("cg"); cg.innerHTML = "";
+  document.getElementById("cml").textContent = `${Y}년 ${M+1}월`;
+  
+  let firstDay = new Date(Y, M, 1).getDay();
+  let lastDate = new Date(Y, M+1, 0).getDate();
 
-    for(let i=0; i<first; i++) cg.innerHTML += `<div class="cel"></div>`;
-    for(let i=1; i<=last; i++) {
-        let dStr = `${Y}-${String(M+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
-        let hasData = AD[dStr] ? "color:var(--ac); font-weight:700;" : "";
-        let selClass = (SD === dStr) ? "sel" : "";
-        
-        let cell = document.createElement("div");
-        cell.className = `cel ${selClass}`;
-        cell.innerHTML = `<div class="dn" style="${hasData}">${i}</div>`;
-        cell.onclick = () => { SD = dStr; renderCalendar(); showDayInfo(dStr); };
-        cg.appendChild(cell);
-    }
+  for(let i=0; i<firstDay; i++) cg.innerHTML += `<div class="cel"></div>`;
+  for(let i=1; i<=lastDate; i++) {
+    let dStr = `${Y}-${String(M+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+    let cell = document.createElement("div");
+    cell.className = `cel ${SD === dStr ? 'sel' : ''}`;
+    cell.innerHTML = `<div class="dn" style="${AD[dStr] ? 'color:var(--ac);font-weight:700' : ''}">${i}</div>`;
+    if(AD[dStr]) cell.innerHTML += `<div style="font-size:10px; color:var(--tx3)">건수: ${AD[dStr].length}</div>`;
+    cell.onclick = () => { SD = dStr; renderCalendar(); showDayInfo(dStr); };
+    cg.appendChild(cell);
+  }
 }
 
 function showDayInfo(date) {
-    document.getElementById("pdt").textContent = date;
-    const pb = document.getElementById("pb"); pb.innerHTML = "";
-    if(AD[date]) {
-        AD[date].forEach(r => {
-            pb.innerHTML += `<div style="padding:8px; background:#f9f9f9; border-radius:6px; margin-bottom:5px;">
-                <b>${r.company}</b> | ${r.card_type} | ${r.qty}개
-            </div>`;
-        });
-    } else {
-        pb.innerHTML = "등록된 내역이 없습니다.";
-    }
-}
-
-// 3. 저장 로직 (에러 수정됨)
-async function saveCard() {
-    const dv = document.getElementById("fd").value;
-    const qty = parseInt(document.getElementById("fq").value);
-    const co = document.getElementById("fc").value.trim();
-    const mg = document.getElementById("fm").value.trim();
-    const mo = document.getElementById("fmo").value.trim();
-
-    // 검증
-    if (SCT < 0) return showToast("감사카드 종류를 선택해주세요.");
-    if (!dv || !co || isNaN(qty)) return showToast("필수 정보를 입력해주세요.");
-
-    showOv("저장 중...");
-    
-    const { error } = await sb.from("cards").insert([{
-        ship_date: dv,
-        company: co,
-        manager: mg,
-        qty: qty,
-        card_type: CTS[SCT], // 이 값이 CTS[SCT]로 정확히 매핑됩니다.
-        memo: mo
-    }]);
-
-    hideOv();
-    if(error) {
-        console.error(error);
-        showToast("저장 실패: " + error.message);
-    } else {
-        showToast("성공적으로 저장되었습니다!");
-        closeUF();
-        loadData();
-    }
-}
-
-// 4. UI 제어
-function bindEvents() {
-    document.getElementById("regBtn").onclick = () => document.getElementById("uf").classList.toggle("show");
-    document.getElementById("cancelBtn").onclick = closeUF;
-    document.getElementById("saveBtn").onclick = saveCard;
-    
-    // 카드 종류 버튼 클릭 이벤트
-    document.querySelectorAll(".ctb").forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll(".ctb").forEach(b => b.className = "ctb");
-            SCT = parseInt(btn.dataset.ci);
-            btn.classList.add("s" + SCT); // 선택된 버튼 색상 변경
-        };
+  document.getElementById("pdt").textContent = date;
+  const pb = document.getElementById("pb"); pb.innerHTML = "";
+  if(AD[date]) {
+    AD[date].forEach(r => {
+      pb.innerHTML += `<div class="item-card">
+        <b>${r.company}</b><br>
+        <span style="font-size:12px; color:var(--tx2)">${r.card_type} | ${r.qty}개 | ${r.manager || '담당자미정'}</span>
+      </div>`;
     });
-
-    document.getElementById("prevM").onclick = () => { M--; if(M<0){M=11; Y--;} renderCalendar(); };
-    document.getElementById("nextM").onclick = () => { M++; if(M>11){M=0; Y++;} renderCalendar(); };
+  } else {
+    pb.innerHTML = "출고 내역이 없습니다.";
+  }
 }
 
-function closeUF() {
+async function saveCard() {
+  const dv = document.getElementById("fd").value;
+  const qty = parseInt(document.getElementById("fq").value);
+  const co = document.getElementById("fc").value.trim();
+  const mg = document.getElementById("fm").value.trim();
+  const mo = document.getElementById("fmo").value.trim();
+
+  if (!selectedType) return showToast("카드 종류를 선택해주세요.");
+  if (!dv || !co || isNaN(qty)) return showToast("필수 입력 항목을 확인해주세요.");
+
+  showOv(true);
+
+  // 테이블 컬럼 불일치로 인한 400 에러를 방지하기 위해 
+  // 가장 확실한 기본 컬럼들만 먼저 전송합니다.
+  const { error } = await sb.from("cards").insert([{
+    ship_date: dv,
+    company: co,
+    manager: mg,
+    qty: qty,
+    card_type: selectedType,
+    memo: mo
+  }]);
+
+  showOv(false);
+  if(error) {
+    console.error("에러상세:", error);
+    alert("저장 실패했습니다.\n사유: " + error.message);
+  } else {
+    showToast("성공적으로 저장되었습니다!");
     document.getElementById("uf").classList.remove("show");
-    document.querySelectorAll(".ctb").forEach(b => b.className = "ctb");
-    SCT = -1;
+    resetForm();
+    loadData();
+  }
 }
 
-function showOv(m) { document.getElementById("lt3").textContent = m; document.getElementById("ov").classList.add("show"); }
-function hideOv() { document.getElementById("ov").classList.remove("show"); }
+function resetForm() {
+  document.getElementById("fd").value = "";
+  document.getElementById("fq").value = "";
+  document.getElementById("fc").value = "";
+  document.getElementById("fm").value = "";
+  document.getElementById("fmo").value = "";
+  document.querySelectorAll(".ctb").forEach(b => b.classList.remove("selected"));
+  selectedType = "";
+}
+
+function showOv(v) { document.getElementById("ov").classList.toggle("show", v); }
 function showToast(m) {
-    const t = document.getElementById("tst"); t.textContent = m; t.classList.add("show");
-    setTimeout(() => t.classList.remove("show"), 3000);
+  const t = document.getElementById("tst"); t.textContent = m; t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 3000);
 }
 </script>
 </body>
