@@ -505,11 +505,12 @@ async function saveCard() {
   
   if (SCT < 0) { showToast("감사카드 종류를 선택해주세요"); return; }
   if (!dv)  { showToast("출고일자를 입력해주세요"); return; }
-  if (!co)  { showToast("고객사명을 입력해주세요"); return; }
+  if (!co)  { showToast("고객사명(기업명)을 입력해주세요"); return; }
   if (qty <= 0) { showToast("수량을 입력해주세요"); return; }
 
-  var sbtn = document.getElementById("saveBtn"); // 변수명 중복 방지를 위해 sbtn으로 표기
-  sbtn.disabled = true;
+  // ⭐ 이 부분의 변수 이름을 sb에서 saveBtn으로 바꿨습니다.
+  var saveBtn = document.getElementById("saveBtn"); 
+  saveBtn.disabled = true;
   showOv(PF ? "파일 업로드 중..." : "저장 중...");
 
   try {
@@ -524,7 +525,7 @@ async function saveCard() {
       fileUrl = urlData.publicUrl;
     }
 
-    // ⭐ 이 부분을 아래처럼 수정하세요 (created_by 제거)
+    // 이제 여기서 sb.from은 정상적으로 Supabase 클라이언트를 가리킵니다.
     var { error: dbErr } = await sb.from("cards").insert([{
       ship_date: dv,
       company: co,
@@ -534,19 +535,18 @@ async function saveCard() {
       file_name: fileName,
       file_url: fileUrl,
       memo: mo
-      // created_by: CURRENT_USER_EMAIL  <-- 이 줄을 삭제했습니다.
     }]);
 
     if (dbErr) throw dbErr;
 
-    showToast("저장되었습니다!");
+    showToast("성공적으로 저장되었습니다!");
     closeUF();
     await loadData();
   } catch (err) {
     console.error(err);
     showToast("오류 발생: " + err.message);
   } finally {
-    sbtn.disabled = false;
+    saveBtn.disabled = false;
     hideOv();
   }
 }
