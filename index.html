@@ -321,7 +321,8 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
 // ───────────────────────────────────────
 const SUPA_URL = "https://mvjbvyeiyrmtgnbydghr.supabase.co";
 const SUPA_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im12amJ2eWVpeXJtdGduYnlkZ2hyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUwOTczMzAsImV4cCI6MjA5MDY3MzMzMH0.CsWrPRbXLcmVmYyj85-fDu_8BiaRNmCHDPw-30a_pEs";
-const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+const { createClient } = window.supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
 
 // ───────────────────────────────────────
 // 전역 변수
