@@ -158,6 +158,13 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
 .usec{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-top:16px}
 .usec-hd{padding:12px 14px;background:var(--sf2);border-bottom:1px solid var(--bd);font-size:12px;font-weight:700;color:var(--tx2)}
 
+/* 수정 모드 */
+.uf.edit-mode{border-left:3px solid var(--bl)}
+.uf.edit-mode h3{color:var(--bl)}
+.edit-badge{display:inline-block;background:var(--bl2);color:var(--bl);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:8px;vertical-align:middle}
+.ab.ed{color:var(--bl)}
+.ab.ed:hover{background:var(--bl2);color:var(--bl)}
+
 /* 로그인 화면 */
 .login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;background:var(--bg)}
 .login-box{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:40px 36px;width:360px;text-align:center}
@@ -237,7 +244,7 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
         </div>
       </div>
       <div class="uf" id="uf">
-        <h3>감사카드 등록</h3>
+        <h3 id="ufTitle">감사카드 등록</h3>
         <div style="margin-bottom:5px">
           <div style="font-size:10px;font-weight:700;color:var(--tx2);margin-bottom:6px">감사카드 종류<span class="rq">*</span></div>
           <div class="ctg">
@@ -262,6 +269,7 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
         </div>
         <div class="ff"><label>메모 <span style="font-size:9px;color:var(--tx3);font-weight:400">(비고 선택)</span></label><textarea id="fmo" placeholder="추가로 기억해야 할 내용"></textarea></div>
         <div class="fa"><button class="btn" id="cancelBtn">취소</button><button class="btn pr" id="saveBtn">저장</button></div>
+        <input type="hidden" id="editId" value="">
       </div>
     </div>
     <div class="tp" id="tp1">
@@ -326,7 +334,7 @@ const sb = supabase.createClient(SUPA_URL, SUPA_KEY);
 // ───────────────────────────────────────
 // 전역 변수
 // ───────────────────────────────────────
-var Y, M, SD = null, AD = {}, PF = null, SCT = -1;
+var Y, M, SD = null, AD = {}, PF = null, SCT = -1, EDIT_ID = null;
 var FSQ = "", FCT = "all", ROLE = "viewer";
 var CTS = ["상시감카", "메세지감카", "자체감카", "감카없음"];
 var NF = [1];
@@ -481,6 +489,7 @@ async function loadData() {
     if (!AD[key]) AD[key] = [];
     AD[key].push({
       rowId:    row.id,
+      shipDate: key,
       company:  row.company  || "",
       manager:  row.manager  || "",
       qty:      Number(row.qty) || 0,
@@ -502,19 +511,20 @@ async function saveCard() {
   var co  = document.getElementById("fc").value.trim();
   var mg  = document.getElementById("fm").value.trim();
   var mo  = document.getElementById("fmo").value.trim();
-  
+
   if (SCT < 0) { showToast("감사카드 종류를 선택해주세요"); return; }
   if (!dv)  { showToast("출고일자를 입력해주세요"); return; }
   if (!co)  { showToast("고객사명(기업명)을 입력해주세요"); return; }
   if (qty <= 0) { showToast("수량을 입력해주세요"); return; }
 
-  // ⭐ 이 부분의 변수 이름을 sb에서 saveBtn으로 바꿨습니다.
-  var saveBtn = document.getElementById("saveBtn"); 
+  var saveBtn = document.getElementById("saveBtn");
   saveBtn.disabled = true;
-  showOv(PF ? "파일 업로드 중..." : "저장 중...");
+  showOv(PF ? "파일 업로드 중..." : (EDIT_ID ? "수정 중..." : "저장 중..."));
 
   try {
-    var fileName = "", fileUrl = "";
+    var fileName = EDIT_ID ? document.getElementById("editId").dataset.fname || "" : "";
+    var fileUrl  = EDIT_ID ? document.getElementById("editId").dataset.furl  || "" : "";
+
     if (PF) {
       var fext = PF.name.split('.').pop();
       var fn = Date.now() + "." + fext;
@@ -525,21 +535,24 @@ async function saveCard() {
       fileUrl = urlData.publicUrl;
     }
 
-    // 이제 여기서 sb.from은 정상적으로 Supabase 클라이언트를 가리킵니다.
-    var { error: dbErr } = await sb.from("cards").insert([{
-      ship_date: dv,
-      company: co,
-      manager: mg,
-      qty: qty,
-      card_type: CTS[SCT],
-      file_name: fileName,
-      file_url: fileUrl,
-      memo: mo
-    }]);
+    var payload = {
+      ship_date: dv, company: co, manager: mg, qty: qty,
+      card_type: CTS[SCT], file_name: fileName, file_url: fileUrl, memo: mo
+    };
 
+    var dbErr;
+    if (EDIT_ID) {
+      // 수정 모드
+      var res = await sb.from("cards").update(payload).eq("id", EDIT_ID);
+      dbErr = res.error;
+    } else {
+      // 신규 등록
+      var res = await sb.from("cards").insert([payload]);
+      dbErr = res.error;
+    }
     if (dbErr) throw dbErr;
 
-    showToast("성공적으로 저장되었습니다!");
+    showToast(EDIT_ID ? "수정 완료!" : "등록 완료!");
     closeUF();
     await loadData();
   } catch (err) {
@@ -764,6 +777,12 @@ function renderPanel() {
       act.appendChild(dlb);
     }
     if(ROLE==="master"||ROLE==="editor"){
+      // 수정 버튼
+      var edb=document.createElement("button"); edb.className="ab ed"; edb.title="수정";
+      edb.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>';
+      (function(card){ edb.addEventListener("click",function(){ openEdit(card); }); })(c);
+      act.appendChild(edb);
+      // 삭제 버튼
       var delb=document.createElement("button"); delb.className="ab dl"; delb.style.marginLeft="auto";
       delb.innerHTML="🗑️"; delb.style.cssText="font-size:13px;line-height:1;border:none;background:transparent;cursor:pointer;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:var(--rs)";
       (function(rid){ delb.addEventListener("click",function(){ delCard(rid); }); })(c.rowId);
@@ -782,14 +801,46 @@ function openUF() {
   document.getElementById("uf").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 function closeUF() {
-  document.getElementById("uf").classList.remove("show");
+  var uf = document.getElementById("uf");
+  uf.classList.remove("show","edit-mode");
   ["fi","fc","fm","fq","fmo"].forEach(function(id){ document.getElementById(id).value=""; });
   document.getElementById("ufn").textContent="";
-  SCT=-1; PF=null;
+  var ei = document.getElementById("editId");
+  ei.value=""; ei.dataset.fname=""; ei.dataset.furl="";
+  SCT=-1; PF=null; EDIT_ID=null;
+  document.getElementById("ufTitle").textContent="감사카드 등록";
+  document.getElementById("saveBtn").textContent="저장";
   document.querySelectorAll(".ctb").forEach(function(b){ b.className="ctb"; });
   var uz=document.getElementById("uz"); uz.classList.remove("dis");
   document.getElementById("uol").textContent="파일 첨부 (선택)";
   document.getElementById("uol").style.color="var(--ac)";
+}
+
+function openEdit(c) {
+  if(ROLE!=="master"&&ROLE!=="editor"){ showToast("수정 권한이 없습니다."); return; }
+  EDIT_ID = c.rowId;
+  SCT = CTS.indexOf(c.cardType);
+  var uf = document.getElementById("uf");
+  uf.classList.add("show","edit-mode");
+  document.getElementById("ufTitle").innerHTML = "감사카드 수정 <span class=\"edit-badge\">수정 중</span>";
+  document.getElementById("saveBtn").textContent = "수정 저장";
+  document.getElementById("fd").value = c.shipDate || "";
+  document.getElementById("fc").value = c.company  || "";
+  document.getElementById("fm").value = c.manager  || "";
+  document.getElementById("fq").value = c.qty      || "";
+  document.getElementById("fmo").value= c.memo     || "";
+  var ei = document.getElementById("editId");
+  ei.value = c.rowId;
+  ei.dataset.fname = c.fileName || "";
+  ei.dataset.furl  = c.fileUrl  || "";
+  // 카드종류 버튼 선택
+  document.querySelectorAll(".ctb").forEach(function(b,j){ b.className="ctb"+(j===SCT?" s"+SCT:""); });
+  // 파일 업로드 영역
+  var uz=document.getElementById("uz"), lb=document.getElementById("uol");
+  if(NF.indexOf(SCT)>=0){ uz.classList.remove("dis"); lb.textContent="PPT 파일 교체 (선택)"; lb.style.color="var(--ac)"; }
+  else { uz.classList.add("dis"); lb.textContent="파일 첨부 불필요"; lb.style.color="var(--tx3)"; }
+  if(c.fileName){ document.getElementById("ufn").textContent="현재: "+c.fileName; }
+  uf.scrollIntoView({behavior:"smooth",block:"nearest"});
 }
 function handleFile(i){ var f=i.files[0]; if(!f) return; PF=f; document.getElementById("ufn").textContent=f.name; }
 
