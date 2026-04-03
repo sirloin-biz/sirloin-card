@@ -1022,11 +1022,20 @@ function dlExcel() {
 var STAT_SORT = "qty"; // qty | cnt | date
 var STAT_DIR  = "desc";
 var STAT_Q    = "";
+var STAT_FS   = "";  // 통계 시작일
+var STAT_FE   = "";  // 통계 종료일
+
+function setStatToday(){ var n=new Date(),k=gk(n.getFullYear(),n.getMonth(),n.getDate()); STAT_FS=k; STAT_FE=k; renderStats(); }
+function setStatWeek(){ var r=getWR(); STAT_FS=d2k(r.s); STAT_FE=d2k(r.e); renderStats(); }
+function setStatMonth(){ var n=new Date(); STAT_FS=d2k(new Date(n.getFullYear(),n.getMonth(),1)); STAT_FE=d2k(new Date(n.getFullYear(),n.getMonth()+1,0)); renderStats(); }
+function setStatAll(){ STAT_FS=""; STAT_FE=""; renderStats(); }
 
 function renderStats() {
-  // 전체 데이터에서 고객사별 집계
+  // 날짜 필터 적용해서 고객사별 집계
   var map = {};
   Object.keys(AD).forEach(function(date) {
+    if (STAT_FS && date < STAT_FS) return;
+    if (STAT_FE && date > STAT_FE) return;
     AD[date].forEach(function(c) {
       var co = c.company || "알 수 없음";
       if (!map[co]) map[co] = { company: co, qty: 0, cnt: 0, lastDate: "", types: {} };
@@ -1039,7 +1048,7 @@ function renderStats() {
 
   var rows = Object.values(map);
 
-  // 검색 필터
+  // 고객사 검색 필터
   if (STAT_Q) rows = rows.filter(function(r){ return r.company.toLowerCase().indexOf(STAT_Q) >= 0; });
 
   // 정렬
@@ -1056,12 +1065,46 @@ function renderStats() {
   var wrap = document.getElementById("statWrap");
   wrap.innerHTML = "";
 
-  // 상단 요약 카드
+  // ── 날짜 필터 바 ──
+  var df = document.createElement("div");
+  df.style.cssText = "display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap;background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:12px 14px";
+
+  var fsIn = document.createElement("input"); fsIn.type="date"; fsIn.value=STAT_FS;
+  fsIn.style.cssText="padding:6px 10px;border:1px solid var(--bd);border-radius:var(--rs);font-size:12px;font-family:inherit;background:var(--sf);color:var(--tx)";
+  fsIn.addEventListener("change", function(){ STAT_FS=this.value; renderStats(); });
+
+  var sep = document.createElement("span"); sep.textContent="~"; sep.style.cssText="font-size:12px;color:var(--tx3)";
+
+  var feIn = document.createElement("input"); feIn.type="date"; feIn.value=STAT_FE;
+  feIn.style.cssText="padding:6px 10px;border:1px solid var(--bd);border-radius:var(--rs);font-size:12px;font-family:inherit;background:var(--sf);color:var(--tx)";
+  feIn.addEventListener("change", function(){ STAT_FE=this.value; renderStats(); });
+
+  df.appendChild(fsIn); df.appendChild(sep); df.appendChild(feIn);
+
+  [["오늘", setStatToday], ["이번주", setStatWeek], ["이번달", setStatMonth], ["전체", setStatAll]].forEach(function(b) {
+    var btn = document.createElement("button"); btn.className="btn"; btn.textContent=b[0];
+    btn.style.cssText="padding:5px 10px;font-size:12px";
+    btn.addEventListener("click", b[1]);
+    df.appendChild(btn);
+  });
+
+  // 기간 표시 텍스트
+  var periodTxt = document.createElement("span");
+  periodTxt.style.cssText="font-size:11px;color:var(--tx3);margin-left:4px";
+  if (STAT_FS || STAT_FE) {
+    periodTxt.textContent = (STAT_FS||"시작")+' ~ '+(STAT_FE||"종료");
+  } else {
+    periodTxt.textContent = "전체 기간";
+  }
+  df.appendChild(periodTxt);
+  wrap.appendChild(df);
+
+  // ── 상단 요약 카드 ──
   var sg = document.createElement("div"); sg.className = "stat-grid";
   [
-    { label: "총 고객사 수", val: rows.length.toLocaleString()+"개사", sub: "누적 거래 고객사" },
-    { label: "총 출고 수량", val: totalQty.toLocaleString()+"개", sub: "전체 기간 합계" },
-    { label: "총 출고 건수", val: totalCnt.toLocaleString()+"건", sub: "전체 기간 합계" }
+    { label: "총 고객사 수", val: rows.length.toLocaleString()+"개사", sub: STAT_FS||STAT_FE ? "조회 기간 내" : "누적 거래 고객사" },
+    { label: "총 출고 수량", val: totalQty.toLocaleString()+"개", sub: STAT_FS||STAT_FE ? "조회 기간 합계" : "전체 기간 합계" },
+    { label: "총 출고 건수", val: totalCnt.toLocaleString()+"건", sub: STAT_FS||STAT_FE ? "조회 기간 합계" : "전체 기간 합계" }
   ].forEach(function(s) {
     var sc = document.createElement("div"); sc.className = "stat-card";
     sc.innerHTML = '<div class="stat-card-label">'+s.label+'</div><div class="stat-card-val">'+s.val+'</div><div class="stat-card-sub">'+s.sub+'</div>';
@@ -1069,7 +1112,7 @@ function renderStats() {
   });
   wrap.appendChild(sg);
 
-  // 필터/정렬 바
+  // ── 검색/정렬 바 ──
   var sf = document.createElement("div"); sf.className = "stat-filter";
   var inp = document.createElement("input"); inp.type="text"; inp.placeholder="고객사명 검색..."; inp.value=STAT_Q;
   inp.addEventListener("input", function(){ STAT_Q=this.value.trim().toLowerCase(); renderStats(); });
