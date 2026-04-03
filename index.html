@@ -208,6 +208,47 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
 .login-btn{width:100%;padding:11px;background:var(--ac);color:#fff;border:none;border-radius:var(--rs);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;transition:background .15s}
 .login-btn:hover{background:var(--ac3)}
 .login-err{font-size:12px;color:var(--rd);margin-top:8px;min-height:18px}
+
+/* ───────────────────────────────────────
+   모바일 대응
+─────────────────────────────────────── */
+.ham{display:none;width:36px;height:36px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sf);cursor:pointer;align-items:center;justify-content:center;flex-direction:column;gap:5px;flex-shrink:0}
+.ham span{display:block;width:16px;height:2px;background:var(--tx);border-radius:2px;transition:all .2s}
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:199}
+.sb-overlay.show{display:block}
+
+@media(max-width:768px){
+  .app{grid-template-columns:1fr}
+  .sb{position:fixed;left:-240px;top:0;width:220px;height:100vh;z-index:200;transition:left .25s;box-shadow:4px 0 20px rgba(0,0,0,.15)}
+  .sb.open{left:0}
+  .ham{display:flex}
+  .top{padding:10px 14px;gap:8px}
+  .tt{font-size:13px}.ts{font-size:10px}
+  .ct{padding:12px 14px}
+  .sr{grid-template-columns:1fr;gap:8px}
+  .cpw{grid-template-columns:1fr}
+  .sp{margin-top:12px}
+  .fg{grid-template-columns:1fr}
+  .stat-grid{grid-template-columns:1fr;gap:8px}
+  .tabbar{overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;scrollbar-width:none}
+  .tabbar::-webkit-scrollbar{display:none}
+  .tabb{padding:10px 14px;font-size:12px}
+  .lt2{flex-wrap:wrap;gap:6px}
+  .fbar{flex-wrap:wrap}
+  .btn{padding:6px 10px;font-size:12px}
+  .top .btn.pr{font-size:12px;padding:6px 10px}
+  .ctg{grid-template-columns:repeat(2,1fr)}
+  .cel{min-height:52px;padding:4px}
+  .dn{width:18px;height:18px;font-size:10px}
+  .cd{font-size:8px;padding:1px 3px}
+  .stat-dt th:nth-child(5),.stat-dt td:nth-child(5){display:none}
+  .ur{flex-wrap:wrap;gap:6px}
+}
+@media(max-width:400px){
+  .sr{grid-template-columns:1fr}
+  .sv{font-size:20px}
+  .stat-dt th:nth-child(6),.stat-dt td:nth-child(6){display:none}
+}
 </style>
 </head>
 <body>
@@ -230,6 +271,7 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
 </div>
 
 <!-- 메인 앱 -->
+<div class="sb-overlay" id="sbOverlay"></div>
 <div class="app" id="mainApp" style="display:none">
 <aside class="sb">
   <div class="logo"><div class="lm">SL</div><div><div class="lt">설로인</div><div class="ls">법인사업팀 어드민</div></div></div>
@@ -243,7 +285,12 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
 </aside>
 <main class="mn">
   <div class="top">
-    <div><div class="tt">감사카드 출고 관리</div><div class="ts" id="tdate"></div></div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <button class="ham" id="hamBtn" aria-label="메뉴">
+        <span></span><span></span><span></span>
+      </button>
+      <div><div class="tt">감사카드 출고 관리</div><div class="ts" id="tdate"></div></div>
+    </div>
     <button class="btn pr" id="regBtn">+감사카드 등록</button>
   </div>
   <div class="ct">
@@ -502,9 +549,25 @@ function bindEvents() {
     });
     renderList();
   });
-  document.getElementById("menuCard").addEventListener("click", function(){ swPage(0); });
-  document.getElementById("menuPerm").addEventListener("click", function(){ swPage(1); });
+  document.getElementById("menuCard").addEventListener("click", function(){ swPage(0); closeSB(); });
+  document.getElementById("menuPerm").addEventListener("click", function(){ swPage(1); closeSB(); });
   document.getElementById("uAddBtn").addEventListener("click", addUser);
+  // 햄버거 메뉴
+  document.getElementById("hamBtn").addEventListener("click", function(){ toggleSB(); });
+  document.getElementById("sbOverlay").addEventListener("click", function(){ closeSB(); });
+}
+
+function toggleSB() {
+  var sb = document.getElementById("mainApp").querySelector(".sb");
+  var ov = document.getElementById("sbOverlay");
+  sb.classList.toggle("open");
+  ov.classList.toggle("show");
+}
+function closeSB() {
+  var sb = document.getElementById("mainApp").querySelector(".sb");
+  var ov = document.getElementById("sbOverlay");
+  sb.classList.remove("open");
+  ov.classList.remove("show");
 }
 
 // ───────────────────────────────────────
