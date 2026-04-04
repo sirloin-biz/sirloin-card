@@ -346,6 +346,7 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
           <div class="fgr"><label>수량<span class="rq">*</span></label><input type="number" id="fq" placeholder="예) 50" min="1"></div>
           <div class="fgr"><label>고객사명<span class="rq">*</span></label><input type="text" id="fc" placeholder="예) 삼성전자"></div>
           <div class="fgr"><label>담당자명</label><input type="text" id="fm" placeholder="예) 홍길동"></div>
+          <div class="fgr"><label>세트명</label><input type="text" id="fsn" placeholder="예) 스페셜 한우세트"></div>
         </div>
         <div class="ff"><label>메모 <span style="font-size:9px;color:var(--tx3);font-weight:400">(비고 선택)</span></label><textarea id="fmo" placeholder="추가로 기억해야 할 내용"></textarea></div>
         <div class="fa"><button class="btn" id="cancelBtn">취소</button><button class="btn pr" id="saveBtn">저장</button></div>
@@ -374,7 +375,7 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
       </div>
       <div class="tw">
         <table class="dt">
-          <thead><tr><th style="width:90px">출고일자</th><th>기업명</th><th>담당자</th><th style="width:100px">감사카드 종류</th><th style="width:70px;text-align:right">수량</th><th>메모</th></tr></thead>
+          <thead><tr><th style="width:90px">출고일자</th><th>기업명</th><th>담당자</th><th>세트명</th><th style="width:100px">감사카드 종류</th><th style="width:70px;text-align:right">수량</th><th>메모</th></tr></thead>
           <tbody id="dtb"></tbody>
         </table>
       </div>
@@ -592,6 +593,7 @@ async function loadData() {
       shipDate: key,
       company:  row.company  || "",
       manager:  row.manager  || "",
+      setName:  row.set_name || "",
       qty:      Number(row.qty) || 0,
       cardType: row.card_type || "",
       fileName: row.file_name || "",
@@ -610,6 +612,7 @@ async function saveCard() {
   var qty = parseInt(document.getElementById("fq").value) || 0;
   var co  = document.getElementById("fc").value.trim();
   var mg  = document.getElementById("fm").value.trim();
+  var sn  = document.getElementById("fsn").value.trim();
   var mo  = document.getElementById("fmo").value.trim();
 
   if (SCT < 0) { showToast("감사카드 종류를 선택해주세요"); return; }
@@ -636,7 +639,7 @@ async function saveCard() {
     }
 
     var payload = {
-      ship_date: dv, company: co, manager: mg, qty: qty,
+      ship_date: dv, company: co, manager: mg, set_name: sn, qty: qty,
       card_type: CTS[SCT], file_name: fileName, file_url: fileUrl, memo: mo
     };
 
@@ -902,7 +905,7 @@ function openUF() {
 function closeUF() {
   var uf = document.getElementById("uf");
   uf.classList.remove("show","edit-mode");
-  ["fi","fc","fm","fq","fmo"].forEach(function(id){ document.getElementById(id).value=""; });
+  ["fi","fc","fm","fsn","fq","fmo"].forEach(function(id){ document.getElementById(id).value=""; });
   document.getElementById("ufn").textContent="";
   var ei = document.getElementById("editId");
   ei.value=""; ei.dataset.fname=""; ei.dataset.furl="";
@@ -926,6 +929,7 @@ function openEdit(c) {
   document.getElementById("fd").value = c.shipDate || "";
   document.getElementById("fc").value = c.company  || "";
   document.getElementById("fm").value = c.manager  || "";
+  document.getElementById("fsn").value= c.setName  || "";
   document.getElementById("fq").value = c.qty      || "";
   document.getElementById("fmo").value= c.memo     || "";
   var ei = document.getElementById("editId");
@@ -950,7 +954,7 @@ function getRows() {
     AD[k].forEach(function(c){
       if(FSQ&&(c.company||"").toLowerCase().indexOf(FSQ)<0) return;
       if(FCT!=="all"&&CTS.indexOf(c.cardType||"")!==parseInt(FCT)) return;
-      rows.push({date:k,company:c.company||"",manager:c.manager||"",cardType:c.cardType||"",qty:Number(c.qty)||0,memo:c.memo||""});
+      rows.push({date:k,company:c.company||"",manager:c.manager||"",setName:c.setName||"",cardType:c.cardType||"",qty:Number(c.qty)||0,memo:c.memo||""});
     });
   });
   return rows;
@@ -961,7 +965,7 @@ function renderList() {
   tb.innerHTML="";
   if(!rows.length){
     var er=document.createElement("tr"); er.className="er";
-    var td=document.createElement("td"); td.setAttribute("colspan","6"); td.textContent="조회된 데이터가 없어요";
+    var td=document.createElement("td"); td.setAttribute("colspan","7"); td.textContent="조회된 데이터가 없어요";
     er.appendChild(td); tb.appendChild(er);
     document.getElementById("rinfo").textContent="0건"; return;
   }
@@ -971,7 +975,7 @@ function renderList() {
   Object.keys(groups).sort().forEach(function(date){
     var items=groups[date], dq=items.reduce(function(s,r){return s+r.qty;},0), p=date.split("-");
     var gr=document.createElement("tr"); gr.className="gr";
-    var gtd=document.createElement("td"); gtd.setAttribute("colspan","6");
+    var gtd=document.createElement("td"); gtd.setAttribute("colspan","7");
     var gdl=document.createElement("span"); gdl.className="gdl";
     gdl.textContent=parseInt(p[1])+"월 "+parseInt(p[2])+"일 ("+WD[new Date(date+"T00:00:00").getDay()]+")";
     var gsm=document.createElement("span"); gsm.className="gsm";
@@ -980,7 +984,7 @@ function renderList() {
     items.forEach(function(r){
       var tr=document.createElement("tr"), ci=CTS.indexOf(r.cardType), tc=ci>=0?TBC[ci]:TBC[3];
       var cells=[
-        {cls:"dc",txt:r.date},{cls:"cc2",txt:r.company},{cls:"",txt:r.manager||"—"},
+        {cls:"dc",txt:r.date},{cls:"cc2",txt:r.company},{cls:"",txt:r.manager||"—"},{cls:"",txt:r.setName||"—"},
         {cls:"",html:'<span class="tbg '+tc+'">'+r.cardType+"</span>"},
         {cls:"qc",txt:r.qty.toLocaleString()},{cls:"mc",txt:r.memo||"—",title:r.memo}
       ];
@@ -995,7 +999,7 @@ function renderList() {
     });
   });
   var tr2=document.createElement("tr"); tr2.className="tr2";
-  var td1=document.createElement("td"); td1.setAttribute("colspan","4"); td1.style.cssText="text-align:right;color:var(--tx2);font-size:11px"; td1.textContent="합계";
+  var td1=document.createElement("td"); td1.setAttribute("colspan","5"); td1.style.cssText="text-align:right;color:var(--tx2);font-size:11px"; td1.textContent="합계";
   var td4=document.createElement("td"); td4.className="qc"; td4.textContent=tQ.toLocaleString();
   var td5=document.createElement("td");
   tr2.appendChild(td1); tr2.appendChild(td4); tr2.appendChild(td5);
@@ -1007,9 +1011,9 @@ function dlExcel() {
   var rows=getRows();
   if(!rows.length){ showToast("다운로드할 데이터가 없어요"); return; }
   var sv=document.getElementById("fs").value||"전체", ev=document.getElementById("fe").value||"전체";
-  var lines=["﻿출고일자,기업명,담당자,감사카드종류,수량,메모"];
+  var lines=["﻿출고일자,기업명,담당자,세트명,감사카드종류,수량,메모"];
   rows.forEach(function(r){
-    lines.push([r.date,'"'+(r.company||"").replace(/"/g,'""')+'"','"'+(r.manager||"").replace(/"/g,'""')+'"','"'+(r.cardType||"").replace(/"/g,'""')+'"',r.qty,'"'+(r.memo||"").replace(/"/g,'""')+'"'].join(","));
+    lines.push([r.date,'"'+(r.company||"").replace(/"/g,'""')+'"','"'+(r.manager||"").replace(/"/g,'""')+'"','"'+(r.setName||"").replace(/"/g,'""')+'"','"'+(r.cardType||"").replace(/"/g,'""')+'"',r.qty,'"'+(r.memo||"").replace(/"/g,'""')+'"'].join(","));
   });
   var b=new Blob([lines.join("\n")],{type:"text/csv;charset=utf-8;"}), u=URL.createObjectURL(b), a=document.createElement("a");
   a.href=u; a.download="설로인_감사카드출고현황_"+sv+"_"+ev+".csv"; a.click(); URL.revokeObjectURL(u);
