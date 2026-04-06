@@ -579,6 +579,7 @@ async function loadData() {
   var { data, error } = await sb
     .from("cards")
     .select("*")
+    .limit(10000)
     .order("ship_date", { ascending: true });
   hideOv();
   if (error) { showToast("불러오기 실패: " + error.message); return; }
