@@ -576,13 +576,35 @@ function closeSB() {
 // ───────────────────────────────────────
 async function loadData() {
   showOv("데이터 불러오는 중...");
-  var { data, error } = await sb
-    .from("cards")
-    .select("*")
-    .limit(10000)
-    .order("ship_date", { ascending: true });
+  
+  let allData = [];
+  let fromIdx = 0;
+  let hasMore = true;
+  
+  while (hasMore) {
+    var { data, error } = await sb
+      .from("cards")
+      .select("*")
+      .range(fromIdx, fromIdx + 999)
+      .order("ship_date", { ascending: true });
+      
+    if (error) { 
+      hideOv(); 
+      showToast("불러오기 실패: " + error.message); 
+      return; 
+    }
+    
+    if (data && data.length > 0) {
+      allData = allData.concat(data);
+      if (data.length < 1000) hasMore = false;
+      else fromIdx += 1000;
+    } else {
+      hasMore = false;
+    }
+  }
+  
   hideOv();
-  if (error) { showToast("불러오기 실패: " + error.message); return; }
+  var data = allData;
 
   AD = {};
   (data || []).forEach(function(row) {
