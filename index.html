@@ -249,6 +249,66 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
   .sv{font-size:20px}
   .stat-dt th:nth-child(6),.stat-dt td:nth-child(6){display:none}
 }
+
+/* 이메일 섹션 */
+.em-wrap{display:flex;flex-direction:column;gap:14px}
+.em-srch{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);padding:16px 18px}
+.em-srch-title{font-size:13px;font-weight:700;margin-bottom:12px}
+.em-srch-grid{display:grid;grid-template-columns:1fr 1fr 2fr 160px 160px;gap:10px;margin-bottom:12px}
+.em-srch-field{display:flex;flex-direction:column;gap:4px}
+.em-srch-field label{font-size:10px;font-weight:700;color:var(--tx2);letter-spacing:.3px}
+.em-srch-field input{padding:7px 10px;border:1px solid var(--bd);border-radius:var(--rs);font-size:12px;font-family:inherit;background:var(--sf);color:var(--tx)}
+.em-srch-field input:focus{outline:none;border-color:var(--ac)}
+.em-srch-chk{display:flex;align-items:center;gap:16px;margin-bottom:8px;font-size:12px}
+.em-srch-chk label{display:flex;align-items:center;gap:5px;cursor:pointer;color:var(--tx)}
+.em-srch-chk input[type=checkbox]{width:14px;height:14px;cursor:pointer;accent-color:var(--ac)}
+.em-srch-btn{display:flex;justify-content:flex-end;margin-top:4px}
+.em-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.em-count{font-size:12px;color:var(--tx2)}
+.em-acts{display:flex;gap:6px}
+.em-list{background:var(--sf);border:1px solid var(--bd);border-radius:var(--r);overflow:hidden}
+.em-tbl{width:100%;border-collapse:collapse;font-size:12px}
+.em-tbl thead tr{background:var(--sf2)}
+.em-tbl th{padding:9px 12px;text-align:left;font-size:11px;font-weight:700;color:var(--tx2);letter-spacing:.3px;border-bottom:1px solid var(--bd);white-space:nowrap}
+.em-tbl td{padding:9px 12px;border-bottom:1px solid var(--bd);vertical-align:middle}
+.em-tbl tbody tr:last-child td{border-bottom:none}
+.em-tbl tbody tr:hover{background:var(--ac2)}
+.em-tbl tbody tr.unread .em-subj{font-weight:700}
+.em-badge-recv{background:var(--bl2);color:var(--bl);border:1px solid #B5D4F4;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;display:inline-block}
+.em-badge-sent{background:#F3EFF8;color:#7C3AED;border:1px solid #DDD6FE;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;display:inline-block}
+.em-subj{font-size:12px;color:var(--tx);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:380px}
+.em-prev{font-size:11px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:380px;margin-top:1px}
+.em-date{font-family:"DM Mono",monospace;font-size:11px;color:var(--tx2);white-space:nowrap}
+.em-pagination{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx2)}
+.em-pg-info{display:flex;align-items:center;gap:8px}
+.em-pg-btns{display:flex;gap:4px}
+.em-pg-btn{width:28px;height:28px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sf);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tx2);font-size:16px;font-weight:700;line-height:1}
+.em-pg-btn:hover:not(:disabled){background:var(--sf2)}
+.em-pg-btn:disabled{opacity:.4;cursor:default}
+.em-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:flex-start;justify-content:center;overflow-y:auto;padding:24px 16px}
+.em-modal.show{display:flex}
+.em-modal-box{background:var(--sf);border-radius:var(--r);width:100%;max-width:800px;margin:auto;box-shadow:0 8px 40px rgba(0,0,0,.18);overflow:hidden;flex-shrink:0}
+.em-modal-hd{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:var(--sf2)}
+.em-modal-title{font-size:14px;font-weight:700;flex:1;margin-right:16px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.em-modal-close{width:30px;height:30px;border:1px solid var(--bd);border-radius:var(--rs);background:var(--sf);cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--tx2);font-size:18px;line-height:1;flex-shrink:0}
+.em-modal-close:hover{background:var(--rd2);color:var(--rd)}
+.em-modal-meta{padding:12px 20px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:5px;font-size:12px}
+.em-meta-row{display:flex;align-items:flex-start;gap:8px}
+.em-meta-label{font-weight:700;color:var(--tx3);min-width:48px;flex-shrink:0}
+.em-meta-val{color:var(--tx)}
+.em-modal-body{padding:20px;font-size:13px;line-height:1.7;color:var(--tx);overflow-y:auto;max-height:480px}
+.em-modal-att{padding:12px 20px;border-top:1px solid var(--bd);background:var(--sf2)}
+.em-att-title{font-size:10px;font-weight:700;color:var(--tx3);letter-spacing:.3px;margin-bottom:8px}
+.em-att-list{display:flex;flex-wrap:wrap;gap:6px}
+.em-att-item{display:flex;align-items:center;gap:6px;padding:6px 10px;background:var(--sf);border:1px solid var(--bd);border-radius:var(--rs);font-size:11px;cursor:pointer;color:var(--tx);transition:all .15s}
+.em-att-item:hover{background:var(--ac2);border-color:var(--ac)}
+.em-att-item svg{width:12px;height:12px;flex-shrink:0}
+.em-att-size{font-size:10px;color:var(--tx3);font-family:"DM Mono",monospace;margin-left:3px}
+@media(max-width:768px){
+  .em-srch-grid{grid-template-columns:1fr 1fr}
+  .em-subj,.em-prev{max-width:140px}
+  .em-tbl th:nth-child(4),.em-tbl td:nth-child(4){display:none}
+}
 </style>
 </head>
 <body>
@@ -278,6 +338,11 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
   <div class="nl">MENU</div>
   <div class="ni active" id="menuCard">감사카드 관리</div>
   <div class="ni" id="menuPerm" style="display:none">권한 관리</div>
+  <div class="nl" style="margin-top:14px">이메일</div>
+  <div class="ni" id="menuEmail">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"></rect><path d="m22 7-10 7L2 7"></path></svg>
+    이메일
+  </div>
   <div class="sf">설로인(주) 법인사업팀<br>biz&#64;sirloin&#46;co&#46;kr<br>
     <span id="roleBadge" style="background:rgba(255,255,255,.15);padding:1px 7px;border-radius:10px;font-size:10px;margin-top:4px;display:inline-block">loading...</span>
     <br><button onclick="doLogout()" style="margin-top:8px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);padding:3px 10px;border-radius:4px;font-size:10px;cursor:pointer;font-family:inherit">로그아웃</button>
@@ -383,6 +448,67 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
     <div class="tp" id="tp3">
       <div id="statWrap"></div>
     </div>
+    <div class="tp" id="tpEmail">
+      <div class="em-wrap">
+        <div class="em-srch">
+          <div class="em-srch-title">검색</div>
+          <div class="em-srch-grid">
+            <div class="em-srch-field"><label>회사명</label><input type="text" id="emFCo" placeholder="회사명"></div>
+            <div class="em-srch-field"><label>발송인</label><input type="text" id="emFSender" placeholder="발송인"></div>
+            <div class="em-srch-field"><label>내용</label><input type="text" id="emFContent" placeholder="제목/내용"></div>
+            <div class="em-srch-field"><label>시작일</label><input type="date" id="emFStart"></div>
+            <div class="em-srch-field"><label>종료일</label><input type="date" id="emFEnd"></div>
+          </div>
+          <div class="em-srch-chk">
+            <label><input type="checkbox" id="emFAll1" checked> 전체</label>
+            <label><input type="checkbox" id="emFUnread"> 미확인한 이메일</label>
+            <label><input type="checkbox" id="emFRead"> 확인한 이메일</label>
+          </div>
+          <div class="em-srch-chk">
+            <label><input type="checkbox" id="emFDir0" checked> 전체</label>
+            <label><input type="checkbox" id="emFDir1"> 받은 메일</label>
+            <label><input type="checkbox" id="emFDir2"> 보낸 메일</label>
+          </div>
+          <div class="em-srch-btn"><button class="btn pr" id="emSearchBtn">검색</button></div>
+        </div>
+        <div class="em-toolbar">
+          <div class="em-count" id="emCount">0 / 0 페이지 | 총 0개</div>
+          <div class="em-acts">
+            <button class="btn" id="emMarkReadBtn">선택 읽음</button>
+            <button class="btn" id="emMarkUnreadBtn">선택 안읽음</button>
+            <button class="btn" style="color:var(--rd)" id="emDeleteBtn">선택 삭제</button>
+          </div>
+        </div>
+        <div class="em-list">
+          <table class="em-tbl">
+            <thead><tr>
+              <th style="width:36px"><input type="checkbox" id="emSelAll"></th>
+              <th style="width:90px">메일 구분</th>
+              <th style="width:120px">발송인</th>
+              <th style="width:100px">회사명</th>
+              <th>내용</th>
+              <th style="width:140px">날짜</th>
+              <th style="width:90px"></th>
+            </tr></thead>
+            <tbody id="emTbody"></tbody>
+          </table>
+          <div class="em-pagination">
+            <div class="em-pg-info">
+              <span id="emPgInfo">1 / 1 페이지</span>
+              <select id="emPerPage" style="padding:3px 6px;border:1px solid var(--bd);border-radius:var(--rs);font-size:11px;font-family:inherit;background:var(--sf)">
+                <option value="10">10개씩</option>
+                <option value="20">20개씩</option>
+                <option value="50">50개씩</option>
+              </select>
+            </div>
+            <div class="em-pg-btns">
+              <button class="em-pg-btn" id="emPgPrev" disabled>&#8249;</button>
+              <button class="em-pg-btn" id="emPgNext" disabled>&#8250;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
     <div class="tp" id="tp2">
       <div class="usec">
         <div class="usec-hd">사용자 목록</div>
@@ -403,6 +529,22 @@ body{font-family:"Noto Sans KR",sans-serif;background:var(--bg);color:var(--tx);
     </div>
   </div>
 </main>
+</div>
+
+<!-- 이메일 상세 모달 -->
+<div class="em-modal" id="emModal">
+  <div class="em-modal-box">
+    <div class="em-modal-hd">
+      <div class="em-modal-title" id="emModalTitle"></div>
+      <button class="em-modal-close" id="emModalClose">&#215;</button>
+    </div>
+    <div class="em-modal-meta" id="emModalMeta"></div>
+    <div class="em-modal-body" id="emModalBody"></div>
+    <div class="em-modal-att" id="emModalAtt" style="display:none">
+      <div class="em-att-title">첨부파일</div>
+      <div class="em-att-list" id="emAttList"></div>
+    </div>
+  </div>
 </div>
 
 <!-- Supabase SDK -->
@@ -552,7 +694,9 @@ function bindEvents() {
   });
   document.getElementById("menuCard").addEventListener("click", function(){ swPage(0); closeSB(); });
   document.getElementById("menuPerm").addEventListener("click", function(){ swPage(1); closeSB(); });
+  document.getElementById("menuEmail").addEventListener("click", function(){ swPage(2); closeSB(); });
   document.getElementById("uAddBtn").addEventListener("click", addUser);
+  bindEmailEvents();
   // 햄버거 메뉴
   document.getElementById("hamBtn").addEventListener("click", function(){ toggleSB(); });
   document.getElementById("sbOverlay").addEventListener("click", function(){ closeSB(); });
@@ -783,19 +927,26 @@ function swTab(i) {
   if (i===2) { renderStats(); }
 }
 function swPage(p) {
-  var mc=document.getElementById("menuCard"), mp=document.getElementById("menuPerm");
+  var mc=document.getElementById("menuCard"), mp=document.getElementById("menuPerm"), me=document.getElementById("menuEmail");
   var cardArea=document.querySelector(".ct > .tabbar");
-  var tp0=document.getElementById("tp0"), tp1=document.getElementById("tp1"), tp2=document.getElementById("tp2"), tp3=document.getElementById("tp3");
+  var tp0=document.getElementById("tp0"), tp1=document.getElementById("tp1"), tp2=document.getElementById("tp2"), tp3=document.getElementById("tp3"), tpE=document.getElementById("tpEmail");
+  mc.classList.remove("active"); mp.classList.remove("active"); me.classList.remove("active");
+  cardArea.style.display="none"; tp0.style.display="none"; tp1.style.display="none"; tp2.style.display="none"; tp3.style.display="none"; tpE.style.display="none";
   if (p===0) {
-    mc.classList.add("active"); mp.classList.remove("active");
-    cardArea.style.display=""; tp0.style.display=""; tp1.style.display=""; tp3.style.display=""; tp2.style.display="none";
+    mc.classList.add("active");
+    cardArea.style.display=""; tp0.style.display=""; tp1.style.display=""; tp3.style.display="";
     var at=document.querySelector(".tabb.active");
-    if (at && at.id==="tab1") { tp1.classList.add("active"); tp0.classList.remove("active"); }
-    else { tp0.classList.add("active"); tp1.classList.remove("active"); }
-  } else {
-    mc.classList.remove("active"); mp.classList.add("active");
-    cardArea.style.display="none"; tp0.style.display="none"; tp1.style.display="none"; tp3.style.display="none"; tp2.style.display="block";
+    if (at && at.id==="tab1") { tp1.classList.add("active"); tp0.classList.remove("active"); tp3.classList.remove("active"); }
+    else if (at && at.id==="tab2") { tp3.classList.add("active"); tp0.classList.remove("active"); tp1.classList.remove("active"); }
+    else { tp0.classList.add("active"); tp1.classList.remove("active"); tp3.classList.remove("active"); }
+  } else if (p===1) {
+    mp.classList.add("active");
+    tp2.style.display="block";
     loadUsers();
+  } else if (p===2) {
+    me.classList.add("active");
+    tpE.style.display="block";
+    if (!EM_DATA.length && EM_TOTAL === 0) loadEmails();
   }
 }
 function selCT(i) {
@@ -1227,6 +1378,274 @@ function renderStats() {
 function showOv(m){ document.getElementById("lt3").textContent=m||"처리 중..."; document.getElementById("ov").classList.add("show"); }
 function hideOv(){ document.getElementById("ov").classList.remove("show"); }
 function showToast(m){ var t=document.getElementById("tst"); t.textContent=m; t.classList.add("show"); setTimeout(function(){ t.classList.remove("show"); },2800); }
+
+// ───────────────────────────────────────
+// 이메일 섹션
+// ───────────────────────────────────────
+var EM_PAGE = 1;
+var EM_PER_PAGE = 10;
+var EM_TOTAL = 0;
+var EM_DATA = [];
+var EM_SEL = new Set();
+var EM_FILTER = { co:"", sender:"", content:"", start:"", end:"", read:"all", dir:"all" };
+
+function bindEmailEvents() {
+  // 읽음 상태 체크박스 (라디오 동작)
+  var readIds = ["emFAll1","emFUnread","emFRead"];
+  readIds.forEach(function(id, i) {
+    document.getElementById(id).addEventListener("change", function() {
+      if (!this.checked) { this.checked = true; return; }
+      readIds.forEach(function(oid, j) { if (j !== i) document.getElementById(oid).checked = false; });
+    });
+  });
+  // 방향 체크박스 (라디오 동작)
+  var dirIds = ["emFDir0","emFDir1","emFDir2"];
+  dirIds.forEach(function(id, i) {
+    document.getElementById(id).addEventListener("change", function() {
+      if (!this.checked) { this.checked = true; return; }
+      dirIds.forEach(function(oid, j) { if (j !== i) document.getElementById(oid).checked = false; });
+    });
+  });
+  document.getElementById("emSearchBtn").addEventListener("click", function() {
+    EM_PAGE = 1;
+    EM_FILTER.co      = document.getElementById("emFCo").value.trim();
+    EM_FILTER.sender  = document.getElementById("emFSender").value.trim();
+    EM_FILTER.content = document.getElementById("emFContent").value.trim();
+    EM_FILTER.start   = document.getElementById("emFStart").value;
+    EM_FILTER.end     = document.getElementById("emFEnd").value;
+    EM_FILTER.read    = document.getElementById("emFUnread").checked ? "unread" : document.getElementById("emFRead").checked ? "read" : "all";
+    EM_FILTER.dir     = document.getElementById("emFDir1").checked ? "received" : document.getElementById("emFDir2").checked ? "sent" : "all";
+    loadEmails();
+  });
+  document.getElementById("emSelAll").addEventListener("change", function() {
+    var chk = this.checked;
+    EM_SEL.clear();
+    if (chk) EM_DATA.forEach(function(e) { EM_SEL.add(e.id); });
+    document.querySelectorAll(".em-row-chk").forEach(function(cb) { cb.checked = chk; });
+  });
+  document.getElementById("emMarkReadBtn").addEventListener("click", function() { markEmailsRead(true); });
+  document.getElementById("emMarkUnreadBtn").addEventListener("click", function() { markEmailsRead(false); });
+  document.getElementById("emDeleteBtn").addEventListener("click", deleteSelectedEmails);
+  document.getElementById("emPgPrev").addEventListener("click", function() { if (EM_PAGE > 1) { EM_PAGE--; loadEmails(); } });
+  document.getElementById("emPgNext").addEventListener("click", function() {
+    var tp = Math.ceil(EM_TOTAL / EM_PER_PAGE) || 1;
+    if (EM_PAGE < tp) { EM_PAGE++; loadEmails(); }
+  });
+  document.getElementById("emPerPage").addEventListener("change", function() {
+    EM_PER_PAGE = parseInt(this.value); EM_PAGE = 1; loadEmails();
+  });
+  document.getElementById("emModalClose").addEventListener("click", closeEmailDetail);
+  document.getElementById("emModal").addEventListener("click", function(e) {
+    if (e.target === this) closeEmailDetail();
+  });
+  // Enter키 검색
+  ["emFCo","emFSender","emFContent"].forEach(function(id) {
+    document.getElementById(id).addEventListener("keydown", function(e) {
+      if (e.key === "Enter") document.getElementById("emSearchBtn").click();
+    });
+  });
+}
+
+async function loadEmails() {
+  showOv("이메일 불러오는 중...");
+  var q = sb.from("emails").select("id,subject,sender_name,sender_email,company_name,sent_at,direction,is_read,body_text,attachments", { count: "exact" });
+  if (EM_FILTER.co)      q = q.ilike("company_name", "%" + EM_FILTER.co + "%");
+  if (EM_FILTER.sender)  q = q.or("sender_name.ilike.%" + EM_FILTER.sender + "%,sender_email.ilike.%" + EM_FILTER.sender + "%");
+  if (EM_FILTER.content) q = q.or("subject.ilike.%" + EM_FILTER.content + "%,body_text.ilike.%" + EM_FILTER.content + "%");
+  if (EM_FILTER.start)   q = q.gte("sent_at", EM_FILTER.start + "T00:00:00");
+  if (EM_FILTER.end)     q = q.lte("sent_at", EM_FILTER.end + "T23:59:59");
+  if (EM_FILTER.read === "unread") q = q.eq("is_read", false);
+  if (EM_FILTER.read === "read")   q = q.eq("is_read", true);
+  if (EM_FILTER.dir !== "all")     q = q.eq("direction", EM_FILTER.dir);
+  q = q.order("sent_at", { ascending: false }).range((EM_PAGE-1)*EM_PER_PAGE, EM_PAGE*EM_PER_PAGE-1);
+  var res = await q;
+  hideOv();
+  if (res.error) { showToast("이메일 로드 실패: " + res.error.message); return; }
+  EM_DATA = res.data || [];
+  EM_TOTAL = res.count || 0;
+  EM_SEL.clear();
+  renderEmailList();
+}
+
+function renderEmailList() {
+  var tbody = document.getElementById("emTbody");
+  tbody.innerHTML = "";
+  var tp = Math.ceil(EM_TOTAL / EM_PER_PAGE) || 1;
+  document.getElementById("emCount").textContent = EM_PAGE + " / " + tp + " 페이지 | 총 " + EM_TOTAL.toLocaleString() + "개";
+  document.getElementById("emPgInfo").textContent = EM_PAGE + " / " + tp + " 페이지";
+  document.getElementById("emPgPrev").disabled = (EM_PAGE <= 1);
+  document.getElementById("emPgNext").disabled = (EM_PAGE >= tp);
+  document.getElementById("emSelAll").checked = false;
+  if (!EM_DATA.length) {
+    var er = document.createElement("tr");
+    er.innerHTML = '<td colspan="7" style="text-align:center;padding:40px;color:var(--tx3)">이메일이 없습니다</td>';
+    tbody.appendChild(er); return;
+  }
+  EM_DATA.forEach(function(em) {
+    var tr = document.createElement("tr");
+    if (!em.is_read) tr.className = "unread";
+    tr.style.cursor = "pointer";
+    var atts = em.attachments || [];
+    var badge = em.direction === "received" ? '<span class="em-badge-recv">받은메일</span>' : '<span class="em-badge-sent">보낸메일</span>';
+    var sender = escHtml(em.sender_name || em.sender_email || "-");
+    var subjHtml = escHtml(em.subject || "(제목없음)") + (atts.length ? ' <span style="font-size:10px;color:var(--tx3)">📎' + atts.length + '</span>' : "");
+    var prev = escHtml((em.body_text || "").replace(/\s+/g," ").trim().substring(0, 90));
+    tr.innerHTML =
+      '<td><input type="checkbox" class="em-row-chk" data-id="' + em.id + '"' + (EM_SEL.has(em.id) ? " checked" : "") + '></td>' +
+      '<td>' + badge + '</td>' +
+      '<td style="max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="' + escHtml(em.sender_email||"") + '">' + sender + '</td>' +
+      '<td style="max-width:90px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + escHtml(em.company_name||"-") + '</td>' +
+      '<td><div class="em-subj">' + subjHtml + '</div><div class="em-prev">' + prev + '</div></td>' +
+      '<td class="em-date">' + fmtEmDate(em.sent_at) + '</td>' +
+      '<td style="white-space:nowrap">' +
+        '<button class="btn" style="padding:3px 8px;font-size:11px;margin-right:3px" onclick="openEmailDetail(\'' + em.id + '\');event.stopPropagation()">보기</button>' +
+        '<button class="btn" style="padding:3px 8px;font-size:11px;color:var(--rd)" onclick="deleteSingleEmail(\'' + em.id + '\');event.stopPropagation()">삭제</button>' +
+      '</td>';
+    tr.querySelector(".em-row-chk").addEventListener("change", function(e) {
+      e.stopPropagation();
+      if (this.checked) EM_SEL.add(em.id); else EM_SEL.delete(em.id);
+    });
+    tr.addEventListener("click", function(e) {
+      if (e.target.tagName === "INPUT" || e.target.tagName === "BUTTON") return;
+      openEmailDetail(em.id);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function fmtEmDate(s) {
+  if (!s) return "-";
+  var d = new Date(s), n = new Date();
+  var p = function(v) { return String(v).padStart(2,"0"); };
+  var sameDay = d.getFullYear()===n.getFullYear() && d.getMonth()===n.getMonth() && d.getDate()===n.getDate();
+  if (sameDay) return p(d.getHours()) + ":" + p(d.getMinutes());
+  return (d.getFullYear()===n.getFullYear() ? "" : d.getFullYear()+"-") + p(d.getMonth()+1)+"-"+p(d.getDate())+" "+p(d.getHours())+":"+p(d.getMinutes());
+}
+
+function escHtml(s) {
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+async function openEmailDetail(emailId) {
+  showOv("불러오는 중...");
+  var { data: em, error } = await sb.from("emails").select("*").eq("id", emailId).single();
+  hideOv();
+  if (error || !em) { showToast("이메일을 불러올 수 없습니다."); return; }
+  // 읽음 처리
+  if (!em.is_read) {
+    await sb.from("emails").update({ is_read: true }).eq("id", emailId);
+    var row = EM_DATA.find(function(e) { return e.id === emailId; });
+    if (row) { row.is_read = true; }
+    document.querySelectorAll(".em-row-chk[data-id='" + emailId + "']").forEach(function(c) {
+      var tr = c.closest("tr"); if (tr) tr.classList.remove("unread");
+    });
+  }
+  document.getElementById("emModalTitle").textContent = em.subject || "(제목없음)";
+  var mh = "";
+  if (em.direction === "received") {
+    mh += '<div class="em-meta-row"><span class="em-meta-label">보낸이</span><span class="em-meta-val">' + escHtml((em.sender_name ? em.sender_name+" " : "") + "<"+(em.sender_email||"")+">") + '</span></div>';
+    if (em.to_addresses && em.to_addresses.length)
+      mh += '<div class="em-meta-row"><span class="em-meta-label">받는이</span><span class="em-meta-val">' + escHtml(em.to_addresses.join(", ")) + '</span></div>';
+  } else {
+    mh += '<div class="em-meta-row"><span class="em-meta-label">받는이</span><span class="em-meta-val">' + escHtml((em.to_addresses||[]).join(", ")||"-") + '</span></div>';
+  }
+  if (em.company_name) mh += '<div class="em-meta-row"><span class="em-meta-label">회사명</span><span class="em-meta-val">' + escHtml(em.company_name) + '</span></div>';
+  if (em.sent_at)      mh += '<div class="em-meta-row"><span class="em-meta-label">날짜</span><span class="em-meta-val">' + new Date(em.sent_at).toLocaleString("ko-KR") + '</span></div>';
+  document.getElementById("emModalMeta").innerHTML = mh;
+  // 본문
+  var bodyEl = document.getElementById("emModalBody");
+  bodyEl.innerHTML = "";
+  if (em.body_html && em.body_html.trim()) {
+    var ifr = document.createElement("iframe");
+    ifr.setAttribute("sandbox", "allow-same-origin");
+    ifr.style.cssText = "width:100%;border:none;min-height:160px;max-height:460px;display:block";
+    bodyEl.appendChild(ifr);
+    setTimeout(function() {
+      try {
+        ifr.contentDocument.open(); ifr.contentDocument.write(em.body_html); ifr.contentDocument.close();
+        setTimeout(function() {
+          try { ifr.style.height = Math.min(460, ifr.contentDocument.body.scrollHeight + 20) + "px"; } catch(e2) {}
+        }, 150);
+      } catch(e) {
+        bodyEl.innerHTML = '<pre style="white-space:pre-wrap;font-size:12px;color:var(--tx)">' + escHtml(em.body_text||"") + '</pre>';
+      }
+    }, 0);
+  } else {
+    bodyEl.innerHTML = '<pre style="white-space:pre-wrap;font-size:12px;color:var(--tx);margin:0">' + escHtml(em.body_text||"(내용 없음)") + '</pre>';
+  }
+  // 첨부파일
+  var atts = em.attachments || [];
+  var attEl = document.getElementById("emModalAtt"), attList = document.getElementById("emAttList");
+  attList.innerHTML = "";
+  if (atts.length) {
+    attEl.style.display = "";
+    atts.forEach(function(att) {
+      var item = document.createElement("div"); item.className = "em-att-item";
+      var sz = att.size ? (att.size>1048576 ? (att.size/1048576).toFixed(1)+"MB" : att.size>1024 ? Math.round(att.size/1024)+"KB" : att.size+"B") : "";
+      item.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path></svg>' +
+        '<span>' + escHtml(att.filename||"첨부파일") + '</span>' + (sz ? '<span class="em-att-size">'+sz+'</span>' : "");
+      if (att.url) {
+        (function(url, name) {
+          item.addEventListener("click", function() { var a=document.createElement("a"); a.href=url; a.download=name; a.target="_blank"; a.click(); });
+        })(att.url, att.filename||"attachment");
+      } else if (att.content) {
+        (function(b64, name, ct) {
+          item.addEventListener("click", function() {
+            try {
+              var bin=atob(b64), buf=new Uint8Array(bin.length);
+              for(var i=0;i<bin.length;i++) buf[i]=bin.charCodeAt(i);
+              var blob=new Blob([buf],{type:ct||"application/octet-stream"});
+              var u=URL.createObjectURL(blob), a=document.createElement("a");
+              a.href=u; a.download=name; a.click(); URL.revokeObjectURL(u);
+            } catch(e) { showToast("다운로드 실패"); }
+          });
+        })(att.content, att.filename||"attachment", att.contentType);
+      }
+      attList.appendChild(item);
+    });
+  } else {
+    attEl.style.display = "none";
+  }
+  document.getElementById("emModal").classList.add("show");
+}
+
+function closeEmailDetail() {
+  document.getElementById("emModal").classList.remove("show");
+  document.getElementById("emModalBody").innerHTML = "";
+}
+
+async function markEmailsRead(isRead) {
+  var ids = Array.from(EM_SEL);
+  if (!ids.length) { showToast("선택된 이메일이 없습니다."); return; }
+  showOv("처리 중...");
+  var { error } = await sb.from("emails").update({ is_read: isRead }).in("id", ids);
+  hideOv();
+  if (error) { showToast("실패: " + error.message); return; }
+  showToast(isRead ? "읽음으로 표시했습니다." : "안읽음으로 표시했습니다.");
+  loadEmails();
+}
+
+async function deleteSelectedEmails() {
+  var ids = Array.from(EM_SEL);
+  if (!ids.length) { showToast("선택된 이메일이 없습니다."); return; }
+  if (!confirm(ids.length + "개 이메일을 삭제하시겠습니까?")) return;
+  showOv("삭제 중...");
+  var { error } = await sb.from("emails").delete().in("id", ids);
+  hideOv();
+  if (error) { showToast("삭제 실패: " + error.message); return; }
+  showToast("삭제 완료");
+  loadEmails();
+}
+
+async function deleteSingleEmail(emailId) {
+  if (!confirm("이 이메일을 삭제하시겠습니까?")) return;
+  showOv("삭제 중...");
+  var { error } = await sb.from("emails").delete().eq("id", emailId);
+  hideOv();
+  if (error) { showToast("삭제 실패: " + error.message); return; }
+  showToast("삭제 완료");
+  loadEmails();
+}
 </script>
 </body>
 </html>
